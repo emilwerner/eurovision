@@ -26,7 +26,6 @@ h1{
      background: #fff;     
      border-radius: 2px;
      display: inline-block;
-     margin: 1rem;
      padding:1rem;
      width:100%;
      position: relative; 
@@ -34,6 +33,10 @@ h1{
      -webkit-box-sizing: border-box; 
      -moz-box-sizing: border-box;    
      box-sizing: border-box; 
+ }
+
+ .cardParent {
+          padding: 1rem;
  }
 
 @media all and (orientation:portrait) {
