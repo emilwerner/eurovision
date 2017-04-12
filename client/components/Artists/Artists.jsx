@@ -6,10 +6,7 @@ export default class Splash extends React.Component {
     return (
      <div>     
          <Card> 
-          <h1>Välkommen till Eurovision 2017!!</h1>
-          <p>
-              För att komma igång behöver du logga in med ditt Facebook-konto. 
-          </p>
+          <p>Artister</p>
          </Card>
      </div>);
   }
