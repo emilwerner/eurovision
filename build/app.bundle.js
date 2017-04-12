@@ -10007,9 +10007,9 @@ var _Toolbar = __webpack_require__(95);
 
 var _Toolbar2 = _interopRequireDefault(_Toolbar);
 
-var _Splash = __webpack_require__(94);
+var _Artists = __webpack_require__(242);
 
-var _Splash2 = _interopRequireDefault(_Splash);
+var _Artists2 = _interopRequireDefault(_Artists);
 
 var _LoginScreen = __webpack_require__(240);
 
@@ -10038,10 +10038,11 @@ var App = function (_React$Component) {
       return _react2.default.createElement(
         'div',
         null,
+        _react2.default.createElement(_LoginScreen2.default, null),
         _react2.default.createElement(
           _reactRouterComponent.Locations,
           null,
-          _react2.default.createElement(_reactRouterComponent.Location, { path: '/', handler: _Splash2.default })
+          _react2.default.createElement(_reactRouterComponent.Location, { path: '/', handler: _Artists2.default })
         ),
         _react2.default.createElement(_Toolbar2.default, null)
       );
@@ -10064,73 +10065,7 @@ module.exports = __webpack_require__(131);
 
 
 /***/ }),
-/* 94 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _react = __webpack_require__(8);
-
-var _react2 = _interopRequireDefault(_react);
-
-var _Card = __webpack_require__(241);
-
-var _Card2 = _interopRequireDefault(_Card);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var Splash = function (_React$Component) {
-    _inherits(Splash, _React$Component);
-
-    function Splash() {
-        _classCallCheck(this, Splash);
-
-        return _possibleConstructorReturn(this, (Splash.__proto__ || Object.getPrototypeOf(Splash)).apply(this, arguments));
-    }
-
-    _createClass(Splash, [{
-        key: 'render',
-        value: function render() {
-            return _react2.default.createElement(
-                'div',
-                null,
-                _react2.default.createElement(
-                    _Card2.default,
-                    null,
-                    _react2.default.createElement(
-                        'h1',
-                        null,
-                        'V\xE4lkommen till Eurovision 2017!!'
-                    ),
-                    _react2.default.createElement(
-                        'p',
-                        null,
-                        'F\xF6r att komma ig\xE5ng beh\xF6ver du logga in med ditt Facebook-konto.'
-                    )
-                )
-            );
-        }
-    }]);
-
-    return Splash;
-}(_react2.default.Component);
-
-exports.default = Splash;
-
-/***/ }),
+/* 94 */,
 /* 95 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -24894,6 +24829,10 @@ var _react = __webpack_require__(8);
 
 var _react2 = _interopRequireDefault(_react);
 
+var _Card = __webpack_require__(241);
+
+var _Card2 = _interopRequireDefault(_Card);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -24901,6 +24840,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+FB.getLoginStatus(function (response) {
+  statusChangeCallback(response);
+});
 
 var LoginScreen = function (_React$Component) {
   _inherits(LoginScreen, _React$Component);
@@ -24912,10 +24855,27 @@ var LoginScreen = function (_React$Component) {
   }
 
   _createClass(LoginScreen, [{
-    key: "render",
+    key: 'render',
     value: function render() {
 
-      return _react2.default.createElement("div", { className: "loginScreen" });
+      return _react2.default.createElement(
+        'div',
+        { className: 'loginScreen' },
+        _react2.default.createElement(
+          'div',
+          { className: 'card', style: { width: "auto" } },
+          _react2.default.createElement(
+            'h1',
+            null,
+            'WOOOOOOOO'
+          ),
+          _react2.default.createElement(
+            'p',
+            null,
+            'Du beh\xF6ver registrera dig via Facebook innan vi k\xF6r ig\xE5ng!'
+          )
+        )
+      );
     }
   }]);
 
@@ -24973,6 +24933,73 @@ var Card = function (_React$Component) {
 }(_react2.default.Component);
 
 exports.default = Card;
+
+/***/ }),
+/* 242 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(8);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _Card = __webpack_require__(241);
+
+var _Card2 = _interopRequireDefault(_Card);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Splash = function (_React$Component) {
+    _inherits(Splash, _React$Component);
+
+    function Splash() {
+        _classCallCheck(this, Splash);
+
+        return _possibleConstructorReturn(this, (Splash.__proto__ || Object.getPrototypeOf(Splash)).apply(this, arguments));
+    }
+
+    _createClass(Splash, [{
+        key: 'render',
+        value: function render() {
+            return _react2.default.createElement(
+                'div',
+                null,
+                _react2.default.createElement(
+                    _Card2.default,
+                    null,
+                    _react2.default.createElement(
+                        'h1',
+                        null,
+                        'V\xE4lkommen till Eurovision 2017!!'
+                    ),
+                    _react2.default.createElement(
+                        'p',
+                        null,
+                        'F\xF6r att komma ig\xE5ng beh\xF6ver du logga in med ditt Facebook-konto.'
+                    )
+                )
+            );
+        }
+    }]);
+
+    return Splash;
+}(_react2.default.Component);
+
+exports.default = Splash;
 
 /***/ })
 /******/ ]);
