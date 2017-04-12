@@ -11479,16 +11479,16 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var Splash = function (_React$Component) {
-  _inherits(Splash, _React$Component);
+var Artists = function (_React$Component) {
+  _inherits(Artists, _React$Component);
 
-  function Splash() {
-    _classCallCheck(this, Splash);
+  function Artists() {
+    _classCallCheck(this, Artists);
 
-    return _possibleConstructorReturn(this, (Splash.__proto__ || Object.getPrototypeOf(Splash)).apply(this, arguments));
+    return _possibleConstructorReturn(this, (Artists.__proto__ || Object.getPrototypeOf(Artists)).apply(this, arguments));
   }
 
-  _createClass(Splash, [{
+  _createClass(Artists, [{
     key: 'render',
     value: function render() {
       return _react2.default.createElement(
@@ -11507,10 +11507,10 @@ var Splash = function (_React$Component) {
     }
   }]);
 
-  return Splash;
+  return Artists;
 }(_react2.default.Component);
 
-exports.default = Splash;
+exports.default = Artists;
 
 /***/ }),
 /* 96 */
@@ -11551,15 +11551,36 @@ var LoginScreen = function (_React$Component) {
   function LoginScreen() {
     _classCallCheck(this, LoginScreen);
 
-    return _possibleConstructorReturn(this, (LoginScreen.__proto__ || Object.getPrototypeOf(LoginScreen)).apply(this, arguments));
+    var _this = _possibleConstructorReturn(this, (LoginScreen.__proto__ || Object.getPrototypeOf(LoginScreen)).call(this));
+
+    _this.handleChange = _this.handleChange.bind(_this);
+    _this.handleClick = _this.handleClick.bind(_this);
+
+    return _this;
   }
 
   _createClass(LoginScreen, [{
     key: 'componentWillMount',
     value: function componentWillMount() {
       this.setState({
-        hasUserName: !!_Storage2.default.currentUser()
+        hasUserName: !!_Storage2.default.currentUser(),
+        name: ''
       });
+    }
+  }, {
+    key: 'handleChange',
+    value: function handleChange(event) {
+      this.setState({ name: event.target.value.replace(/[^A-Za-z-]/g, "") });
+    }
+  }, {
+    key: 'handleClick',
+    value: function handleClick() {
+      if (this.state.name.length > 3) {
+        _Storage2.default.currentUser(this.state.name);
+        this.setState({ hasUserName: true });
+      } else {
+        alert("Din lata jävel.");
+      }
     }
   }, {
     key: 'render',
@@ -11583,11 +11604,14 @@ var LoginScreen = function (_React$Component) {
           _react2.default.createElement(
             'div',
             { className: 'form-group' },
-            _react2.default.createElement('input', { type: 'text', style: { width: "150px", display: "inline-block", marginRight: "5px" },
+            _react2.default.createElement('input', { type: 'text',
+              value: this.state.name,
+              onChange: this.handleChange,
+              style: { width: "150px", display: "inline-block", marginRight: "5px" },
               className: 'form-control', placeholder: 'Namn..' }),
             _react2.default.createElement(
               'button',
-              { type: 'submit', className: 'btn btn-default' },
+              { type: 'submit', className: 'btn btn-default', onClick: this.handleClick },
               'K\xF6r!'
             )
           )

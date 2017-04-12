@@ -1,7 +1,7 @@
 import React from 'react';
 import Card from './../Card/Card.jsx'
 
-export default class Splash extends React.Component {
+export default class Artists extends React.Component {
   render() {
     return (
      <div>     

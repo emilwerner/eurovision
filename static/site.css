@@ -41,7 +41,6 @@ h1{
 
 @media all and (orientation:portrait) {
     .toolBar  {   
-        border-top: 1px solid #D4AF37; 
         height:50px;
         width:100%;
         bottom: 0;
@@ -49,7 +48,6 @@ h1{
 }
 @media all and (orientation:landscape) {
     .toolBar  {    
-        border-left: 1px solid #D4B44A;    
         height: 100%;
         width:50px;
         top:0;        
