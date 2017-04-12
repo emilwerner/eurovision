@@ -1,7 +1,7 @@
 import React from 'react';
 import Card from './../Card/Card.jsx'
 FB.getLoginStatus(function(response) {
-    statusChangeCallback(response);
+    console.log(response);
 });
 export default class LoginScreen extends React.Component {
   render() {
