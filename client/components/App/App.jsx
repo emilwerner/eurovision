@@ -13,7 +13,6 @@ export default class App extends React.Component {
        <Locations>
           <Location path="/" handler={Artists} />
        </Locations>
-       <Toolbar />
       </div>);
   }
 }
