@@ -2,16 +2,15 @@ html {
     height:100%;
 }
 body {    
-    background:  #bfd8d2;
-    min-height:100%;
+    background:rgb(250,250,250);
+    min-height:1000px;
     font-family: 'Roboto Condensed', sans-serif;
 }
 .loginScreen {
-    background:  #bfd8d2;  
+    background:rgb(250,250,250);
     height:100%;
     position:fixed;
     width:100%;
-    height:100%;
     z-index: 999;
 }
 h1{
@@ -25,19 +24,69 @@ h1{
 .card{
      background: #fff;     
      border-radius: 2px;
-     display: inline-block;
-     padding:1rem;
+     display: inline-block;    
      width:100%;
      position: relative; 
      box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
-     -webkit-box-sizing: border-box; 
-     -moz-box-sizing: border-box;    
-     box-sizing: border-box; 
+
+
+ }
+ .card img{
+    width:100%;
+    border-radius: 4px 4px 0 0;
  }
 
  .cardParent {
-          padding: 1rem;
+    padding: 1rem;
+    transition: padding .6s;
+    
  }
+
+ .card .shortPresentation{
+     padding:20px;
+ }
+
+ .card .country{
+     text-transform: uppercase;
+     font-size:20;
+ }
+ .notes{
+     max-height:0;      
+     padding:0 20px;
+     overflow:hidden;
+     transition: max-height .5s;
+ }
+.exitBar{
+    display: none;
+    position:fixed;
+    top:0;
+    color:white;
+    width:100%;
+    z-index: 999;
+    height:30px;
+}
+.isFocus .exitBar{
+    display:block;
+}
+ .isFocus .cardParent{
+    padding:0;
+    height: 100%;
+    background:white;
+    position: fixed;
+    top:0;
+    z-index: 600;
+ }
+ 
+ .isFocus .card{
+    border-radius: 0;
+    padding-bottom:50px;
+    box-shadow:none;
+ }
+ 
+ .isFocus .notes{
+   max-height: 500px;
+}
+
 
 @media all and (orientation:portrait) {
     .toolBar  {   

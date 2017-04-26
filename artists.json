@@ -1,0 +1,14 @@
+{
+    "artists": [
+        {
+            "id": "df861b72-268f-46c7-95f2-236b93099a55",
+            "country": "Sweden",
+            "name": "Robin Bengtson"
+        },
+        {
+            "id": "df661b72-268f-46c7-95f2-236b93099a55",
+            "country": "Denmark",
+            "name": "Anja"
+        }
+    ]
+}

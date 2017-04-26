@@ -1,0 +1,12 @@
+{
+    "noteTypes": [
+        {
+            "id": "leGuid",
+            "text": "Fin låt"
+        },
+        {
+            "id": "leGuid2",
+            "text": "bra show"
+        }
+    ]
+}
