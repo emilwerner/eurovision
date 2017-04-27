@@ -1,5 +1,8 @@
 import React from 'react';
 import Card from './../Card/Card.jsx'
+import ArtistNotes from "./ArtistNotes.jsx"
+import ArtistPresentation from "./ArtistPresentation.jsx"
+
 
 export default class Artist extends React.Component {
     constructor() {
@@ -10,31 +13,13 @@ export default class Artist extends React.Component {
     }
 
     render() {
-        const imgUri = `/static/${this.props.artist.country}_artist.jpg`;
         return (
             <div onClick={this.setFocus}
                 className={this.state.isFocus ? 'isFocus' : null}
-                ref="topdog">
+                ref="container">
                 <Card>
-                    <img src={imgUri} alt="" />
-                    <div className="shortPresentation">
-                        <p className="country">
-                            {this.props.artist.country}
-                        </p>
-                        <h1>
-                            {this.props.artist.name}
-                        </h1>
-                    </div>
-                    <div className="notes">
-                        <h3>
-                            Betyg
-                        </h3>
-                        <p>10/10</p>
-                        <h3>
-                            Anteckningar
-                        </h3>
-                        <p>10/10</p>
-                    </div>
+                    <ArtistPresentation artist={this.props.artist} />
+                    <ArtistNotes artist={this.props.artist} />
                 </Card>
                 <div className="exitBar">
                     <div onClick={this.stopFocus} className="pull-right">
@@ -51,6 +36,6 @@ export default class Artist extends React.Component {
     }
     _stopFocus() {
         this.setState({ isFocus: false });
-        this.refs.topdog.scrollIntoView();
+        this.refs.container.scrollIntoView();
     }
 }
