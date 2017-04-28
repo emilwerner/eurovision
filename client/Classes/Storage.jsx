@@ -14,14 +14,35 @@ class Storage {
     }
 
     getArtist(artistId) {
-        if (!artistId) throw "WTF man";
-        const artistName = "artist_" + artistId;
+        const artistName = this.getArtistName(artistId)
         let artist = this.storageGet(artistName);
         if (!artist) {
             artist = { id: artistId, notes: [] };
             this.storageSet(artistName, artist);
         }
         return artist;
+    }
+
+    updateArtist(newArtist) {
+        const artistName = this.getArtistName(newArtist.id);
+        let artist = this.getArtist(newArtist.id);
+        artist.rating = newArtist.rating;
+        for (note of newArtist.note) {
+            var oldNote = artist.find(e => {
+                return e.id === note.id;
+            });
+
+            if (!oldNote) {
+                artist.note.push("yolo");
+            }
+        }
+        this.storageSet(getArtistName(artist.id), artist);
+        return artist;
+    }
+
+    getArtistName(artistId) {
+        if (!artistId) throw "WTF man";
+        return "artist_" + artistId;
     }
 
     currentUser(name) {
@@ -32,27 +53,6 @@ class Storage {
             return this.storageGet(_userName);
         }
     }
-
-    updateNote(artistId, note) {
-        const artist = this.getArtist(artistId);
-
-        if (note) {
-            var storageNote = artist.notes.find(item => {
-                return item.id === note.id;
-            });
-
-            if (storageNote) {
-                storageNote.isChecked = note.isChecked;
-            } else {
-                artist.notes.push({
-                    id: note.id,
-                    isChecked: note.isChecked
-                });
-            }
-            this.storageSet("artist_" + artistId, artist);
-        }
-    }
-
 }
 
 export default new Storage();

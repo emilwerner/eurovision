@@ -20,12 +20,14 @@ export default class Artist extends React.Component {
                 <Card>
                     <ArtistPresentation artist={this.props.artist} />
                     <ArtistNotes artist={this.props.artist} />
-                </Card>
-                <div className="exitBar">
-                    <div onClick={this.stopFocus} className="pull-right">
-                        Stäng
+                    <div className="exitBar">
+                        <div onClick={this.stopFocus}>
+                            <i className="material-icons">
+                                highlight_off
+                            </i>
+                        </div>
                     </div>
-                </div>
+                </Card>
             </div>);
     }
 
@@ -36,6 +38,6 @@ export default class Artist extends React.Component {
     }
     _stopFocus() {
         this.setState({ isFocus: false });
-        this.refs.container.scrollIntoView();
+        // this.refs.container.scrollIntoView();
     }
 }

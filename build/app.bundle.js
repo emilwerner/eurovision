@@ -6995,8 +6995,7 @@ var Storage = function () {
     }, {
         key: "getArtist",
         value: function getArtist(artistId) {
-            if (!artistId) throw "WTF man";
-            var artistName = "artist_" + artistId;
+            var artistName = this.getArtistName(artistId);
             var artist = this.storageGet(artistName);
             if (!artist) {
                 artist = { id: artistId, notes: [] };
@@ -7005,33 +7004,58 @@ var Storage = function () {
             return artist;
         }
     }, {
+        key: "updateArtist",
+        value: function updateArtist(newArtist) {
+            var artistName = this.getArtistName(newArtist.id);
+            var artist = this.getArtist(newArtist.id);
+            artist.rating = newArtist.rating;
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
+
+            try {
+                for (var _iterator = newArtist.note[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                    note = _step.value;
+
+                    var oldNote = artist.find(function (e) {
+                        return e.id === note.id;
+                    });
+
+                    if (!oldNote) {
+                        artist.note.push("yolo");
+                    }
+                }
+            } catch (err) {
+                _didIteratorError = true;
+                _iteratorError = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion && _iterator.return) {
+                        _iterator.return();
+                    }
+                } finally {
+                    if (_didIteratorError) {
+                        throw _iteratorError;
+                    }
+                }
+            }
+
+            this.storageSet(getArtistName(artist.id), artist);
+            return artist;
+        }
+    }, {
+        key: "getArtistName",
+        value: function getArtistName(artistId) {
+            if (!artistId) throw "WTF man";
+            return "artist_" + artistId;
+        }
+    }, {
         key: "currentUser",
         value: function currentUser(name) {
             if (name) {
                 this.storageSet(_userName, name);
             } else {
                 return this.storageGet(_userName);
-            }
-        }
-    }, {
-        key: "updateNote",
-        value: function updateNote(artistId, note) {
-            var artist = this.getArtist(artistId);
-
-            if (note) {
-                var storageNote = artist.notes.find(function (item) {
-                    return item.id === note.id;
-                });
-
-                if (storageNote) {
-                    storageNote.isChecked = note.isChecked;
-                } else {
-                    artist.notes.push({
-                        id: note.id,
-                        isChecked: note.isChecked
-                    });
-                }
-                this.storageSet("artist_" + artistId, artist);
             }
         }
     }]);
@@ -11099,10 +11123,6 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _noteTypes = __webpack_require__(225);
-
-var _noteTypes2 = _interopRequireDefault(_noteTypes);
-
 var _Storage = __webpack_require__(56);
 
 var _Storage2 = _interopRequireDefault(_Storage);
@@ -11117,29 +11137,9 @@ var ArtistHandler = function () {
     }
 
     _createClass(ArtistHandler, [{
-        key: "getNotes",
-        value: function getNotes(artistId) {
-            var artist = _Storage2.default.getArtist(artistId);
-            var storageNotes = artist.notes;
-            var notes = JSON.parse(JSON.stringify(_noteTypes2.default.noteTypes));
-
-            var _loop = function _loop(i) {
-                var stoNote = storageNotes.find(function (e) {
-                    return e.id === notes[i].id;
-                });
-
-                if (stoNote) {
-                    notes[i].isChecked = stoNote.isChecked;
-                } else {
-                    notes[i].isChecked = false;
-                }
-            };
-
-            for (var i = 0; i < notes.length; i++) {
-                _loop(i);
-            }
-            notes;
-            return notes;
+        key: "getArtistData",
+        value: function getArtistData(artistId) {
+            return _Storage2.default.getArtist(artistId);
         }
     }, {
         key: "updateNote",
@@ -11221,15 +11221,19 @@ var Artist = function (_React$Component) {
                     _Card2.default,
                     null,
                     _react2.default.createElement(_ArtistPresentation2.default, { artist: this.props.artist }),
-                    _react2.default.createElement(_ArtistNotes2.default, { artist: this.props.artist })
-                ),
-                _react2.default.createElement(
-                    'div',
-                    { className: 'exitBar' },
+                    _react2.default.createElement(_ArtistNotes2.default, { artist: this.props.artist }),
                     _react2.default.createElement(
                         'div',
-                        { onClick: this.stopFocus, className: 'pull-right' },
-                        'St\xE4ng'
+                        { className: 'exitBar' },
+                        _react2.default.createElement(
+                            'div',
+                            { onClick: this.stopFocus },
+                            _react2.default.createElement(
+                                'i',
+                                { className: 'material-icons' },
+                                'highlight_off'
+                            )
+                        )
                     )
                 )
             );
@@ -11245,7 +11249,7 @@ var Artist = function (_React$Component) {
         key: '_stopFocus',
         value: function _stopFocus() {
             this.setState({ isFocus: false });
-            this.refs.container.scrollIntoView();
+            // this.refs.container.scrollIntoView();
         }
     }]);
 
@@ -11298,13 +11302,17 @@ var ArtistNotes = function (_React$Component) {
         _this.updateNote = function (note) {
             return _this._updateNotes(note);
         };
+        _this.ratingChange = function (event) {
+            return _this._ratingChange(event);
+        };
+
         return _this;
     }
 
     _createClass(ArtistNotes, [{
         key: "componentDidMount",
         value: function componentDidMount() {
-            this.state = { notes: _ArtistHandler2.default.getNotes(this.props.artist.id) };
+            this.state = { artistData: _ArtistHandler2.default.getArtistData(this.props.artist.id), rating: 0 };
         }
     }, {
         key: "render",
@@ -11314,28 +11322,42 @@ var ArtistNotes = function (_React$Component) {
             return _react2.default.createElement(
                 "div",
                 { className: "notes" },
-                _react2.default.createElement(
-                    "h3",
-                    null,
-                    "Betyg"
-                ),
-                _react2.default.createElement(
-                    "p",
-                    null,
-                    "10/10"
-                ),
-                _react2.default.createElement(
-                    "h3",
-                    null,
-                    "Anteckningar"
-                ),
-                _react2.default.createElement(
+                this.state ? _react2.default.createElement(
                     "div",
                     null,
-                    this.state ? this.state.notes.map(function (note) {
-                        return _react2.default.createElement(_Note2.default, { key: _this2.props.artist.id + note.id, noteItem: note, updateNote: _this2.updateNote });
-                    }) : null
-                )
+                    _react2.default.createElement(
+                        "h3",
+                        null,
+                        "Betyg: ",
+                        this.state.rating / 10,
+                        "/10"
+                    ),
+                    _react2.default.createElement("input", { type: "range", min: "1", max: "100",
+                        value: this.state.rating,
+                        onChange: this.ratingChange }),
+                    _react2.default.createElement(
+                        "h3",
+                        null,
+                        "Anteckningar"
+                    ),
+                    _react2.default.createElement(
+                        "div",
+                        { className: "form-group form-notes" },
+                        _react2.default.createElement("input", { className: "form-control", type: "text" }),
+                        _react2.default.createElement(
+                            "button",
+                            { className: "btn" },
+                            "Spara"
+                        )
+                    ),
+                    _react2.default.createElement(
+                        "div",
+                        null,
+                        this.state ? this.state.artistData.notes.map(function (note) {
+                            return _react2.default.createElement(_Note2.default, { key: _this2.props.artist.id + note.id, noteItem: note, updateNote: _this2.updateNote });
+                        }) : null
+                    )
+                ) : null
             );
         }
     }, {
@@ -11343,7 +11365,14 @@ var ArtistNotes = function (_React$Component) {
         value: function _updateNotes(note) {
             _ArtistHandler2.default.updateNote(this.props.artist.id, note);
             this.setState({
-                notes: _ArtistHandler2.default.getNotes(this.props.artist.id)
+                artistData: _ArtistHandler2.default.getArtistData(this.props.artist.id)
+            });
+        }
+    }, {
+        key: "_ratingChange",
+        value: function _ratingChange(event) {
+            this.setState({
+                rating: event.target.value
             });
         }
     }]);
@@ -25596,23 +25625,6 @@ module.exports = traverseAllChildren;
 module.exports = __webpack_amd_options__;
 
 /* WEBPACK VAR INJECTION */}.call(exports, {}))
-
-/***/ }),
-/* 225 */
-/***/ (function(module, exports) {
-
-module.exports = {
-	"noteTypes": [
-		{
-			"id": "leGuid",
-			"text": "Fin låt"
-		},
-		{
-			"id": "leGuid2",
-			"text": "bra show"
-		}
-	]
-};
 
 /***/ })
 /******/ ]);
