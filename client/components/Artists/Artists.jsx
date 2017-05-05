@@ -9,6 +9,9 @@ export default class Artists extends React.Component {
   render() {
     return (
       <div>
+        <div>
+          <a className="btn btn-primary btn-vote" href="/vote">Klicka här är att rösta!</a>
+        </div>
         {artistData.artists.map(artist => (
           <Artist
             key={artist.id}

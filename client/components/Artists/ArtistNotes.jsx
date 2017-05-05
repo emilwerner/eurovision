@@ -5,12 +5,16 @@ import Note from "./Note.jsx";
 export default class ArtistNotes extends React.Component {
     constructor() {
         super();
-        this.updateNote = (note) => this._updateNotes(note);
+        this.addNote = (note) => this._addNote(note);
         this.ratingChange = (event) => this._ratingChange(event);
-
+        this.updateNoteText = (event) => this._updateNoteText(event);
     }
     componentDidMount() {
-        this.state = { artistData: artistHandler.getArtistData(this.props.artist.id), rating: 0 };
+        this.state = {
+            artistData: artistHandler.getArtistData(this.props.artist.id),
+            rating: 0,
+            noteText: ""
+        };
     }
 
     render() {
@@ -19,21 +23,23 @@ export default class ArtistNotes extends React.Component {
                 {this.state ?
                     <div>
                         <h3>
-                            Betyg: {this.state.rating / 10}/10
+                            Betyg: {this.state.artistData.rating / 10}/10
                         </h3>
-                        <input type="range" min="1" max="100"
-                            value={this.state.rating}
+                        <input type="range" min="0" max="100"
+                            value={this.state.artistData.rating}
                             onChange={this.ratingChange} />
                         <h3>
                             Anteckningar
                         </h3>
                         <div className="form-group form-notes">
-                            <input className="form-control" type="text" />
-                            <button className="btn">Spara</button>
+                            <input className="form-control" type="text" placeholder="Skriv något bra..."
+                                value={this.state.noteText}
+                                onChange={this.updateNoteText} />
+                            <button className="btn" onClick={this.addNote}>Spara</button>
                         </div>
-                        <div>
+                        <div className="note-container">
                             {this.state ? this.state.artistData.notes.map(note => (
-                                <Note key={this.props.artist.id + note.id} noteItem={note} updateNote={this.updateNote} />
+                                <Note key={note} text={note} />
                             )) : null}
 
                         </div>
@@ -44,15 +50,21 @@ export default class ArtistNotes extends React.Component {
         );
     }
 
-    _updateNotes(note) {
-        artistHandler.updateNote(this.props.artist.id, note);
+    _addNote(note) {
+        if (!this.state.noteText) return;
+        const data = artistHandler.addNote(this.props.artist.id, this.state.noteText);
         this.setState({
-            artistData: artistHandler.getArtistData(this.props.artist.id)
+            artistData: data,
+            noteText: ""
         });
     }
     _ratingChange(event) {
+        const data = artistHandler.updateRating(this.props.artist.id, event.target.value);
+        this.setState({ artistData: data });
+    }
+    _updateNoteText(event) {
         this.setState({
-            rating: event.target.value
+            noteText: event.target.value
         });
     }
 }

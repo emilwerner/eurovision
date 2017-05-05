@@ -7,9 +7,12 @@ class ArtistHandler {
         return storage.getArtist(artistId);
     }
 
-    updateNote(artistId, note) {
-        storage.updateNote(artistId, note);
-        return this.getNotes(artistId);
+    addNote(artistId, note) {
+        return storage.addNote(artistId, note);
+    }
+
+    updateRating(artistId, rating) {
+        return storage.updateRating(artistId, rating);
     }
 }
 

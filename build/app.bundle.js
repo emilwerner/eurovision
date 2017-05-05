@@ -6998,49 +6998,25 @@ var Storage = function () {
             var artistName = this.getArtistName(artistId);
             var artist = this.storageGet(artistName);
             if (!artist) {
-                artist = { id: artistId, notes: [] };
+                artist = { id: artistId, notes: [], rating: 0 };
                 this.storageSet(artistName, artist);
             }
             return artist;
         }
     }, {
-        key: "updateArtist",
-        value: function updateArtist(newArtist) {
-            var artistName = this.getArtistName(newArtist.id);
-            var artist = this.getArtist(newArtist.id);
-            artist.rating = newArtist.rating;
-            var _iteratorNormalCompletion = true;
-            var _didIteratorError = false;
-            var _iteratorError = undefined;
-
-            try {
-                for (var _iterator = newArtist.note[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                    note = _step.value;
-
-                    var oldNote = artist.find(function (e) {
-                        return e.id === note.id;
-                    });
-
-                    if (!oldNote) {
-                        artist.note.push("yolo");
-                    }
-                }
-            } catch (err) {
-                _didIteratorError = true;
-                _iteratorError = err;
-            } finally {
-                try {
-                    if (!_iteratorNormalCompletion && _iterator.return) {
-                        _iterator.return();
-                    }
-                } finally {
-                    if (_didIteratorError) {
-                        throw _iteratorError;
-                    }
-                }
-            }
-
-            this.storageSet(getArtistName(artist.id), artist);
+        key: "updateRating",
+        value: function updateRating(artistId, rating) {
+            var artist = this.getArtist(artistId);
+            artist.rating = rating;
+            this.storageSet(this.getArtistName(artist.id), artist);
+            return artist;
+        }
+    }, {
+        key: "addNote",
+        value: function addNote(artistId, note) {
+            var artist = this.getArtist(artistId);
+            artist.notes.push(note);
+            this.storageSet(this.getArtistName(artist.id), artist);
             return artist;
         }
     }, {
@@ -11053,6 +11029,10 @@ var _LoginScreen = __webpack_require__(104);
 
 var _LoginScreen2 = _interopRequireDefault(_LoginScreen);
 
+var _Vote = __webpack_require__(226);
+
+var _Vote2 = _interopRequireDefault(_Vote);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -11080,7 +11060,8 @@ var App = function (_React$Component) {
         _react2.default.createElement(
           _reactRouterComponent.Locations,
           null,
-          _react2.default.createElement(_reactRouterComponent.Location, { path: '/', handler: _Artists2.default })
+          _react2.default.createElement(_reactRouterComponent.Location, { path: '/', handler: _Artists2.default }),
+          _react2.default.createElement(_reactRouterComponent.Location, { path: '/vote', handler: _Vote2.default })
         )
       );
     }
@@ -11142,10 +11123,14 @@ var ArtistHandler = function () {
             return _Storage2.default.getArtist(artistId);
         }
     }, {
-        key: "updateNote",
-        value: function updateNote(artistId, note) {
-            _Storage2.default.updateNote(artistId, note);
-            return this.getNotes(artistId);
+        key: "addNote",
+        value: function addNote(artistId, note) {
+            return _Storage2.default.addNote(artistId, note);
+        }
+    }, {
+        key: "updateRating",
+        value: function updateRating(artistId, rating) {
+            return _Storage2.default.updateRating(artistId, rating);
         }
     }]);
 
@@ -11183,6 +11168,10 @@ var _ArtistPresentation = __webpack_require__(100);
 
 var _ArtistPresentation2 = _interopRequireDefault(_ArtistPresentation);
 
+var _ArtistHandler = __webpack_require__(97);
+
+var _ArtistHandler2 = _interopRequireDefault(_ArtistHandler);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -11206,12 +11195,22 @@ var Artist = function (_React$Component) {
         _this.stopFocus = function () {
             return _this._stopFocus();
         };
+
         return _this;
     }
 
     _createClass(Artist, [{
+        key: 'componentDidMount',
+        value: function componentDidMount() {
+            this.setState({
+                rating: _ArtistHandler2.default.getArtistData(this.props.artist.id).rating
+            });
+        }
+    }, {
         key: 'render',
         value: function render() {
+            var ratingCss = this._getRatingCSS(this.state.rating);
+
             return _react2.default.createElement(
                 'div',
                 { onClick: this.setFocus,
@@ -11234,9 +11233,27 @@ var Artist = function (_React$Component) {
                                 'highlight_off'
                             )
                         )
+                    ),
+                    _react2.default.createElement(
+                        'div',
+                        { className: ratingCss },
+                        this.state.rating / 10
                     )
                 )
             );
+        }
+    }, {
+        key: '_getRatingCSS',
+        value: function _getRatingCSS(rating) {
+            var base = "score-preview";
+            if (rating < 40) {
+                base += " bad";
+            } else if (rating < 70) {
+                base += " medium";
+            } else {
+                base += " good";
+            }
+            return base;
         }
     }, {
         key: '_setFocus',
@@ -11249,7 +11266,9 @@ var Artist = function (_React$Component) {
         key: '_stopFocus',
         value: function _stopFocus() {
             this.setState({ isFocus: false });
-            // this.refs.container.scrollIntoView();
+            this.setState({
+                rating: _ArtistHandler2.default.getArtistData(this.props.artist.id).rating
+            });
         }
     }]);
 
@@ -11299,26 +11318,30 @@ var ArtistNotes = function (_React$Component) {
 
         var _this = _possibleConstructorReturn(this, (ArtistNotes.__proto__ || Object.getPrototypeOf(ArtistNotes)).call(this));
 
-        _this.updateNote = function (note) {
-            return _this._updateNotes(note);
+        _this.addNote = function (note) {
+            return _this._addNote(note);
         };
         _this.ratingChange = function (event) {
             return _this._ratingChange(event);
         };
-
+        _this.updateNoteText = function (event) {
+            return _this._updateNoteText(event);
+        };
         return _this;
     }
 
     _createClass(ArtistNotes, [{
         key: "componentDidMount",
         value: function componentDidMount() {
-            this.state = { artistData: _ArtistHandler2.default.getArtistData(this.props.artist.id), rating: 0 };
+            this.state = {
+                artistData: _ArtistHandler2.default.getArtistData(this.props.artist.id),
+                rating: 0,
+                noteText: ""
+            };
         }
     }, {
         key: "render",
         value: function render() {
-            var _this2 = this;
-
             return _react2.default.createElement(
                 "div",
                 { className: "notes" },
@@ -11329,11 +11352,11 @@ var ArtistNotes = function (_React$Component) {
                         "h3",
                         null,
                         "Betyg: ",
-                        this.state.rating / 10,
+                        this.state.artistData.rating / 10,
                         "/10"
                     ),
-                    _react2.default.createElement("input", { type: "range", min: "1", max: "100",
-                        value: this.state.rating,
+                    _react2.default.createElement("input", { type: "range", min: "0", max: "100",
+                        value: this.state.artistData.rating,
                         onChange: this.ratingChange }),
                     _react2.default.createElement(
                         "h3",
@@ -11343,36 +11366,46 @@ var ArtistNotes = function (_React$Component) {
                     _react2.default.createElement(
                         "div",
                         { className: "form-group form-notes" },
-                        _react2.default.createElement("input", { className: "form-control", type: "text" }),
+                        _react2.default.createElement("input", { className: "form-control", type: "text", placeholder: "Skriv n\xE5got bra...",
+                            value: this.state.noteText,
+                            onChange: this.updateNoteText }),
                         _react2.default.createElement(
                             "button",
-                            { className: "btn" },
+                            { className: "btn", onClick: this.addNote },
                             "Spara"
                         )
                     ),
                     _react2.default.createElement(
                         "div",
-                        null,
+                        { className: "note-container" },
                         this.state ? this.state.artistData.notes.map(function (note) {
-                            return _react2.default.createElement(_Note2.default, { key: _this2.props.artist.id + note.id, noteItem: note, updateNote: _this2.updateNote });
+                            return _react2.default.createElement(_Note2.default, { key: note, text: note });
                         }) : null
                     )
                 ) : null
             );
         }
     }, {
-        key: "_updateNotes",
-        value: function _updateNotes(note) {
-            _ArtistHandler2.default.updateNote(this.props.artist.id, note);
+        key: "_addNote",
+        value: function _addNote(note) {
+            if (!this.state.noteText) return;
+            var data = _ArtistHandler2.default.addNote(this.props.artist.id, this.state.noteText);
             this.setState({
-                artistData: _ArtistHandler2.default.getArtistData(this.props.artist.id)
+                artistData: data,
+                noteText: ""
             });
         }
     }, {
         key: "_ratingChange",
         value: function _ratingChange(event) {
+            var data = _ArtistHandler2.default.updateRating(this.props.artist.id, event.target.value);
+            this.setState({ artistData: data });
+        }
+    }, {
+        key: "_updateNoteText",
+        value: function _updateNoteText(event) {
             this.setState({
-                rating: event.target.value
+                noteText: event.target.value
             });
         }
     }]);
@@ -11499,6 +11532,15 @@ var Artists = function (_React$Component) {
       return _react2.default.createElement(
         'div',
         null,
+        _react2.default.createElement(
+          'div',
+          null,
+          _react2.default.createElement(
+            'a',
+            { className: 'btn btn-primary btn-vote', href: '/vote' },
+            'Klicka h\xE4r \xE4r att r\xF6sta!'
+          )
+        ),
         _artists2.default.artists.map(function (artist) {
           return _react2.default.createElement(_Artist2.default, {
             key: artist.id,
@@ -11531,10 +11573,6 @@ var _react = __webpack_require__(5);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _Checkbox = __webpack_require__(103);
-
-var _Checkbox2 = _interopRequireDefault(_Checkbox);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -11549,32 +11587,21 @@ var Note = function (_React$Component) {
     function Note() {
         _classCallCheck(this, Note);
 
-        var _this = _possibleConstructorReturn(this, (Note.__proto__ || Object.getPrototypeOf(Note)).call(this));
-
-        _this.handleChange = function () {
-            return _this._handleChange();
-        };
-        return _this;
+        return _possibleConstructorReturn(this, (Note.__proto__ || Object.getPrototypeOf(Note)).call(this));
     }
 
     _createClass(Note, [{
         key: "render",
         value: function render() {
-            this.props.noteItem.isChecked;
             return _react2.default.createElement(
                 "div",
-                null,
-                _react2.default.createElement(_Checkbox2.default, {
-                    isChecked: this.props.noteItem.isChecked,
-                    text: this.props.noteItem.text,
-                    cbChanged: this.handleChange })
+                { className: "note-item" },
+                _react2.default.createElement(
+                    "div",
+                    null,
+                    this.props.text
+                )
             );
-        }
-    }, {
-        key: "_handleChange",
-        value: function _handleChange() {
-            this.props.noteItem.isChecked = !this.props.noteItem.isChecked;
-            this.props.updateNote(this.props.noteItem);
         }
     }]);
 
@@ -11584,61 +11611,7 @@ var Note = function (_React$Component) {
 exports.default = Note;
 
 /***/ }),
-/* 103 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _react = __webpack_require__(5);
-
-var _react2 = _interopRequireDefault(_react);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var Checkbox = function (_React$Component) {
-    _inherits(Checkbox, _React$Component);
-
-    function Checkbox() {
-        _classCallCheck(this, Checkbox);
-
-        return _possibleConstructorReturn(this, (Checkbox.__proto__ || Object.getPrototypeOf(Checkbox)).call(this));
-    }
-
-    _createClass(Checkbox, [{
-        key: "render",
-        value: function render() {
-            return _react2.default.createElement(
-                "div",
-                null,
-                _react2.default.createElement("input", { type: "checkbox", checked: this.props.isChecked, onChange: this.props.cbChanged }),
-                _react2.default.createElement(
-                    "label",
-                    { htmlFor: "" },
-                    this.props.text
-                )
-            );
-        }
-    }]);
-
-    return Checkbox;
-}(_react2.default.Component);
-
-exports.default = Checkbox;
-
-/***/ }),
+/* 103 */,
 /* 104 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -25625,6 +25598,57 @@ module.exports = traverseAllChildren;
 module.exports = __webpack_amd_options__;
 
 /* WEBPACK VAR INJECTION */}.call(exports, {}))
+
+/***/ }),
+/* 225 */,
+/* 226 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(5);
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Note = function (_React$Component) {
+    _inherits(Note, _React$Component);
+
+    function Note() {
+        _classCallCheck(this, Note);
+
+        return _possibleConstructorReturn(this, (Note.__proto__ || Object.getPrototypeOf(Note)).call(this));
+    }
+
+    _createClass(Note, [{
+        key: 'render',
+        value: function render() {
+            return _react2.default.createElement(
+                'p',
+                null,
+                'Ermagerd, vote!'
+            );
+        }
+    }]);
+
+    return Note;
+}(_react2.default.Component);
+
+exports.default = Note;
 
 /***/ })
 /******/ ]);

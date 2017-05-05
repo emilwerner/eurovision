@@ -2,6 +2,8 @@ import React from 'react';
 import Card from './../Card/Card.jsx'
 import ArtistNotes from "./ArtistNotes.jsx"
 import ArtistPresentation from "./ArtistPresentation.jsx"
+import artistHandler from "./../../Classes/ArtistHandler.jsx";
+
 
 
 export default class Artist extends React.Component {
@@ -10,13 +12,22 @@ export default class Artist extends React.Component {
         this.state = { isFocus: false };
         this.setFocus = () => this._setFocus();
         this.stopFocus = () => this._stopFocus();
+
+    }
+    componentDidMount() {
+        this.setState({
+            rating: artistHandler.getArtistData(this.props.artist.id).rating
+        });
     }
 
     render() {
+        const ratingCss = this._getRatingCSS(this.state.rating);
+
         return (
             <div onClick={this.setFocus}
                 className={this.state.isFocus ? 'isFocus' : null}
                 ref="container">
+
                 <Card>
                     <ArtistPresentation artist={this.props.artist} />
                     <ArtistNotes artist={this.props.artist} />
@@ -27,8 +38,23 @@ export default class Artist extends React.Component {
                             </i>
                         </div>
                     </div>
+                    <div className={ratingCss}>
+                        {this.state.rating / 10}
+                    </div>
                 </Card>
             </div>);
+    }
+
+    _getRatingCSS(rating) {
+        let base = "score-preview";
+        if (rating < 40) {
+            base += " bad";
+        } else if (rating < 70) {
+            base += " medium";
+        } else {
+            base += " good";
+        }
+        return base;
     }
 
     _setFocus() {
@@ -38,6 +64,8 @@ export default class Artist extends React.Component {
     }
     _stopFocus() {
         this.setState({ isFocus: false });
-        // this.refs.container.scrollIntoView();
+        this.setState({
+            rating: artistHandler.getArtistData(this.props.artist.id).rating
+        });
     }
 }

@@ -7,11 +7,9 @@ export default class Note extends React.Component {
 
     render() {
         return (
-            <div className="note-item">
-                <div>
-                    {this.props.text}
-                </div>
-            </div>
+            <p>
+                Ermagerd, vote!
+           </p>
         );
     }
 }

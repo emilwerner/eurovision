@@ -17,26 +17,23 @@ class Storage {
         const artistName = this.getArtistName(artistId)
         let artist = this.storageGet(artistName);
         if (!artist) {
-            artist = { id: artistId, notes: [] };
+            artist = { id: artistId, notes: [], rating: 0 };
             this.storageSet(artistName, artist);
         }
         return artist;
     }
 
-    updateArtist(newArtist) {
-        const artistName = this.getArtistName(newArtist.id);
-        let artist = this.getArtist(newArtist.id);
-        artist.rating = newArtist.rating;
-        for (note of newArtist.note) {
-            var oldNote = artist.find(e => {
-                return e.id === note.id;
-            });
+    updateRating(artistId, rating) {
+        const artist = this.getArtist(artistId);
+        artist.rating = rating;
+        this.storageSet(this.getArtistName(artist.id), artist);
+        return artist;
+    }
 
-            if (!oldNote) {
-                artist.note.push("yolo");
-            }
-        }
-        this.storageSet(getArtistName(artist.id), artist);
+    addNote(artistId, note) {
+        let artist = this.getArtist(artistId);
+        artist.notes.push(note);
+        this.storageSet(this.getArtistName(artist.id), artist);
         return artist;
     }
 
