@@ -3461,128 +3461,8 @@ SyntheticEvent.augmentClass(SyntheticUIEvent, UIEventInterface);
 module.exports = SyntheticUIEvent;
 
 /***/ }),
-/* 26 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-/**
- * Routing environment.
- *
- * It specifies how routers read its state from DOM and synchronise it back.
- */
-
-var canUseDOM = !!(typeof window !== 'undefined' && window.document && window.document.createElement);
-var DummyEnvironment      = __webpack_require__(203);
-var Environment           = __webpack_require__(34);
-
-/**
- * Mixin for routes to keep attached to an environment.
- *
- * This mixin assumes the environment is passed via props.
- */
-var Mixin = {
-
-  componentDidMount: function() {
-    this.getEnvironment().register(this);
-  },
-
-  componentWillUnmount: function() {
-    this.getEnvironment().unregister(this);
-  }
-};
-
-var PathnameEnvironment;
-var HashEnvironment;
-
-var pathnameEnvironment;
-var hashEnvironment;
-var defaultEnvironment;
-var dummyEnvironment;
-
-if (canUseDOM) {
-
-  PathnameEnvironment = __webpack_require__(204);
-  HashEnvironment     = __webpack_require__(86);
-
-  pathnameEnvironment = new PathnameEnvironment();
-  hashEnvironment     = new HashEnvironment();
-  defaultEnvironment  = (window.history !== undefined &&
-                         window.history.pushState !== undefined) ?
-                        pathnameEnvironment :
-                        hashEnvironment;
-
-} else {
-
-  dummyEnvironment    = new DummyEnvironment();
-  pathnameEnvironment = dummyEnvironment;
-  hashEnvironment     = dummyEnvironment;
-  defaultEnvironment  = dummyEnvironment;
-
-}
-
-module.exports = {
-  pathnameEnvironment: pathnameEnvironment,
-  hashEnvironment: hashEnvironment,
-  defaultEnvironment: defaultEnvironment,
-  dummyEnvironment: dummyEnvironment,
-
-  Environment: Environment,
-  PathnameEnvironment: PathnameEnvironment,
-  HashEnvironment: HashEnvironment,
-
-  Mixin: Mixin
-};
-
-
-/***/ }),
-/* 27 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/*!
- * object.omit <https://github.com/jonschlinkert/object.omit>
- *
- * Copyright (c) 2014-2015, Jon Schlinkert.
- * Licensed under the MIT License.
- */
-
-
-
-var isObject = __webpack_require__(124);
-var forOwn = __webpack_require__(122);
-
-module.exports = function omit(obj, keys) {
-  if (!isObject(obj)) return {};
-
-  keys = [].concat.apply([], [].slice.call(arguments, 1));
-  var last = keys[keys.length - 1];
-  var res = {}, fn;
-
-  if (typeof last === 'function') {
-    fn = keys.pop();
-  }
-
-  var isFunction = typeof fn === 'function';
-  if (!keys.length && !isFunction) {
-    return obj;
-  }
-
-  forOwn(obj, function(value, key) {
-    if (keys.indexOf(key) === -1) {
-
-      if (!isFunction) {
-        res[key] = value;
-      } else if (fn(value, key, obj)) {
-        res[key] = value;
-      }
-    }
-  });
-  return res;
-};
-
-
-/***/ }),
+/* 26 */,
+/* 27 */,
 /* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -4716,108 +4596,7 @@ if (ExecutionEnvironment.canUseDOM) {
 module.exports = setInnerHTML;
 
 /***/ }),
-/* 34 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-// batchedUpdates is now exposed in 0.12
-var batchedUpdates = __webpack_require__(55).unstable_batchedUpdates || __webpack_require__(5).batchedUpdates;
-
-/**
- * Base abstract class for a routing environment.
- *
- * @private
- */
-function Environment() {
-  this.routers = [];
-  this.path = this.getPath();
-}
-
-/**
- * Notify routers about the change.
- *
- * @param {Object} navigation
- * @param {Function} cb
- */
-Environment.prototype.notify = function notify(navigation, cb) {
-  var latch = this.routers.length;
-
-  if (latch === 0) {
-    return cb && cb();
-  }
-
-  function callback() {
-    latch -= 1;
-    if (cb && latch === 0) {
-      cb();
-    }
-  }
-
-  batchedUpdates(function() {
-    for (var i = 0, len = this.routers.length; i < len; i++) {
-      this.routers[i].setPath(this.path, navigation, callback);
-    }
-  }.bind(this));
-};
-
-Environment.prototype.makeHref = function makeHref(path) {
-  return path;
-};
-
-Environment.prototype.navigate = function navigate(path, navigation, cb) {
-  return this.setPath(path, navigation, cb);
-};
-
-Environment.prototype.setPath = function(path, navigation, cb) {
-  // Support (path, cb) arity.
-  if (typeof navigation === 'function' && cb === undefined) {
-    cb = navigation;
-    navigation = {};
-  }
-  // Support (path) arity.
-  if (!navigation) navigation = {};
-
-  if (!navigation.isPopState) {
-    if (navigation.replace) {
-      this.replaceState(path, navigation);
-    } else {
-      this.pushState(path, navigation);
-    }
-  }
-  this.path = path;
-  this.notify(navigation, cb);
-};
-
-/**
- * Register router with an environment.
- */
-Environment.prototype.register = function register(router) {
-  if (this.routers.length === 0) {
-    this.start();
-  }
-
-  this.routers.push(router);
-};
-
-/**
- * Unregister router from an environment.
- */
-Environment.prototype.unregister = function unregister(router) {
-  if (this.routers.indexOf(router) > -1) {
-    this.routers.splice(this.routers.indexOf(router), 1);
-  }
-
-  if (this.routers.length === 0) {
-    this.stop();
-  }
-};
-
-module.exports = Environment;
-
-
-/***/ }),
+/* 34 */,
 /* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -6976,6 +6755,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var _userName = "userName";
 var _notes = "notes";
+var _vote = "vote";
 
 var Storage = function () {
     function Storage() {
@@ -7033,6 +6813,16 @@ var Storage = function () {
             } else {
                 return this.storageGet(_userName);
             }
+        }
+    }, {
+        key: "getVote",
+        value: function getVote() {
+            var vote = this.storageGet(_vote);
+            if (!vote) {
+                vote = { "1": null, "2": null, "3": null, "4": null, "5": null, "6": null, "7": null, "8": null, "10": null, "12": null };
+                this.storageSet(_vote, vote);
+            }
+            return vote;
         }
     }]);
 
@@ -9519,680 +9309,13 @@ module.exports = traverseAllChildren;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 83 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var React       = __webpack_require__(5);
-var Environment = __webpack_require__(26);
-
-
-/**
- * NavigatableMixin
- *
- * A mixin for a component which operates in context of a router and can
- * navigate to a different route using `navigate(path, navigation, cb)` method.
- */
-var NavigatableMixin = {
-
-  contextTypes: {
-    router: React.PropTypes.any
-  },
-
-  /**
-   * @private
-   */
-  _getNavigable: function() {
-    return this.context.router || Environment.defaultEnvironment;
-  },
-
-  getPath: function() {
-    return this._getNavigable().getPath();
-  },
-
-  navigate: function(path, navigation, cb) {
-    return this._getNavigable().navigate(path, navigation, cb);
-  },
-
-  makeHref: function(path) {
-    return this._getNavigable().makeHref(path);
-  }
-};
-
-module.exports = NavigatableMixin;
-
-
-/***/ }),
-/* 84 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var React = __webpack_require__(5);
-var assign = Object.assign || __webpack_require__(4);
-
-
-/**
- * Mixin for routers which implements the simplest rendering strategy.
- */
-var RouteRenderingMixin = {
-
-  propTypes: {
-    childProps: React.PropTypes.object
-  },
-
-  // Props passed at the `childProps` key are passed to all handlers.
-  getChildProps: function() {
-    var childProps = this.props.childProps || {};
-    // Merge up from parents, with inner props taking priority.
-    var parent = this.getParentRouter();
-    if (parent) {
-      childProps = assign({}, parent.getChildProps(), childProps);
-    }
-    return childProps;
-  },
-
-  renderRouteHandler: function() {
-    if (!this.state.match.route) {
-      throw new Error("React-router-component: No route matched! Did you define a NotFound route?");
-    }
-    var handler = this.state.handler;
-    var isDOMElement = typeof handler.type === 'string';
-
-    // If this is a DOM element, don't send these props. This won't prevent all
-    // warnings in 15.2.0, but it will catch a lot of them.
-    var matchProps = isDOMElement ? null : this.state.matchProps;
-
-    var outProps = assign({ref: this.state.match.route.ref}, this.getChildProps(), matchProps);
-
-    // If we were passed an element, we need to clone it before passing it along.
-    if (React.isValidElement(handler)) {
-      // Be sure to keep the props that were already set on the handler.
-      // Otherwise, a handler like <div className="foo">bar</div> would have its className lost.
-      return React.cloneElement(handler, assign(outProps, handler.props));
-    }
-    return React.createElement(handler, outProps);
-  }
-
-};
-
-module.exports = RouteRenderingMixin;
-
-
-/***/ }),
-/* 85 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var React         = __webpack_require__(5);
-var invariant     = __webpack_require__(87);
-var assign        = Object.assign || __webpack_require__(4);
-var matchRoutes   = __webpack_require__(205);
-var Environment   = __webpack_require__(26);
-var shallowEqual  = __webpack_require__(123);
-
-var RouterMixin = {
-  mixins: [Environment.Mixin],
-
-  propTypes: {
-    // Added by matches
-    _: React.PropTypes.array,
-    _query: React.PropTypes.object,
-    hash: React.PropTypes.bool,
-    // User props
-    path: React.PropTypes.string,
-    contextual: React.PropTypes.bool,
-    onBeforeNavigation: React.PropTypes.func,
-    onNavigation: React.PropTypes.func,
-    urlPatternOptions: React.PropTypes.oneOfType([
-      React.PropTypes.arrayOf(React.PropTypes.string),
-      React.PropTypes.object
-    ])
-  },
-
-  childContextTypes: {
-    router: React.PropTypes.any
-  },
-
-  getChildContext: function() {
-    return {
-      router: this
-    };
-  },
-
-  contextTypes: {
-    router: React.PropTypes.any
-  },
-
-  getInitialState: function() {
-    return this.getRouterState(this.props);
-  },
-
-  componentWillReceiveProps: function(nextProps) {
-    if (!shallowEqual(nextProps, this.props)) {
-      var nextState = this.getRouterState(nextProps);
-      this.delegateSetRoutingState(nextState);
-    }
-  },
-
-  getRouterState: function(props) {
-    var path;
-    var prefix;
-
-    var parent = props.contextual && this.getParentRouter();
-
-    if (parent) {
-      // Build our new path based off the parent. A navigation may be in progress, in which case
-      // we as well want the newest data so we use the pending match.
-      var parentMatch = parent._pendingMatch || parent.getMatch();
-
-      invariant(
-        props.path ||
-        isString(parentMatch.unmatchedPath) ||
-        parentMatch.matchedPath === parentMatch.path,
-        "contextual router has nothing to match on: %s", parentMatch.unmatchedPath
-      );
-
-      path = props.path || parentMatch.unmatchedPath || '/';
-      prefix = parent.state.prefix + parentMatch.matchedPath;
-    } else {
-
-      path = props.path || this.getEnvironment().getPath();
-
-      invariant(
-        isString(path),
-        ("router operate in environment which cannot provide path, " +
-         "pass it a path prop; or probably you want to make it contextual")
-      );
-
-      prefix = '';
-    }
-
-    if (path[0] !== '/') {
-      path = '/' + path;
-    }
-
-    var match = matchRoutes(this.getRoutes(props), path, this.getURLPatternOptions());
-
-    return {
-      match: match,
-      matchProps: match.getProps(),
-      handler: match.getHandler(),
-      prefix: prefix,
-      navigation: {},
-      path: path
-    };
-  },
-
-  getEnvironment: function() {
-    if (this.props.environment) {
-      return this.props.environment;
-    }
-    if (this.props.hash) {
-      return Environment.hashEnvironment;
-    }
-    if (this.props.contextual && this.context.router) {
-      return this.context.router.getEnvironment();
-    }
-    return Environment.defaultEnvironment;
-  },
-
-  /**
-   * Return parent router or undefined.
-   */
-  getParentRouter: function() {
-    var current = this.context.router;
-    var environment = this.getEnvironment();
-
-    if (current) {
-      if (current.getEnvironment() === environment) {
-        return current;
-      }
-    }
-  },
-
-  /**
-   * Return current match.
-   */
-  getMatch: function() {
-    return this.state.match;
-  },
-
-  getURLPatternOptions: function() {
-    var parent = this.getParentRouter();
-    var parentOptions = parent && parent.getURLPatternOptions();
-    // Check existence so we don't return an empty object if there are no options.
-    if (parentOptions) {
-      return assign({}, this.props.urlPatternOptions, parentOptions);
-    }
-    return this.props.urlPatternOptions;
-  },
-
-  /**
-   * Make href scoped for the current router.
-   */
-  makeHref: function(href) {
-    return join(this.state.prefix, href);
-  },
-
-  /**
-   * Navigate to a path
-   *
-   * @param {String} path
-   * @param {Function} navigation
-   * @param {Callback} cb
-   */
-  navigate: function(path, navigation, cb) {
-    path = join(this.state.prefix, path);
-    this.getEnvironment().setPath(path, navigation, cb);
-  },
-
-  /**
-   * Set new path.
-   *
-   * This function is called by environment.
-   *
-   * @private
-   *
-   * @param {String} path
-   * @param {Function} navigation
-   * @param {Callback} cb
-   */
-  setPath: function(path, navigation, cb) {
-    var state = this.getRouterState(this.props);
-    state.navigation = navigation;
-
-    if (this.props.onBeforeNavigation &&
-        this.props.onBeforeNavigation(state.path, navigation, state.match) === false) {
-      return;
-    }
-
-    if (navigation.onBeforeNavigation &&
-        navigation.onBeforeNavigation(state.path, navigation, state.match) === false) {
-      return;
-    }
-
-    this.delegateSetRoutingState(state, function() {
-      if (this.props.onNavigation) {
-        this.props.onNavigation(state.path, navigation, state.match);
-      }
-      cb();
-    }.bind(this));
-  },
-
-  /**
-   * Return the current path
-   */
-  getPath: function () {
-    return this.state.match.path;
-  },
-
-  /**
-   * Try to delegate state update to a setRoutingState method (might be provided
-   * by router itself) or use replaceState.
-   */
-  delegateSetRoutingState: function(state, cb) {
-    // Store this here so it can be accessed by child contextual routers in onBeforeNavigation.
-    this._pendingMatch = state.match;
-
-    if (this.setRoutingState) {
-      this.setRoutingState(state, cb);
-    } else {
-      this.setState(state, cb);
-    }
-  }
-
-};
-
-function join(a, b) {
-  return (a + b).replace(/\/\//g, '/');
-}
-
-function isString(o) {
-  return Object.prototype.toString.call(o) === '[object String]';
-}
-
-module.exports = RouterMixin;
-
-
-/***/ }),
-/* 86 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var Environment = __webpack_require__(34);
-
-/**
- * Routing environment which routes by `location.hash`.
- */
-function HashEnvironment() {
-  this.onHashChange = this.onHashChange.bind(this);
-  Environment.call(this);
-}
-
-HashEnvironment.prototype = Object.create(Environment.prototype);
-HashEnvironment.prototype.constructor = HashEnvironment;
-
-HashEnvironment.prototype.getPath = function() {
-  return window.location.hash.slice(1) || '/';
-};
-
-HashEnvironment.prototype.pushState = function(path, navigation) {
-  window.location.hash = path;
-};
-
-HashEnvironment.prototype.replaceState = function(path, navigation) {
-  var href = window.location.href.replace(/(javascript:|#).*$/, '');
-  window.location.replace(href + '#' + path);
-};
-
-HashEnvironment.prototype.start = function() {
-  if (window.addEventListener) {
-    window.addEventListener('hashchange', this.onHashChange);
-  } else {
-    window.attachEvent('onhashchange', this.onHashChange);
-  }
-};
-
-HashEnvironment.prototype.stop = function() {
-  if (window.removeEventListener) {
-    window.removeEventListener('hashchange', this.onHashChange);
-  } else {
-    window.detachEvent('onhashchange', this.onHashChange);
-  }
-};
-
-HashEnvironment.prototype.onHashChange = function() {
-  var path = this.getPath();
-
-  if (this.path !== path) {
-    this.setPath(path, {isPopState: true});
-  }
-};
-
-module.exports = HashEnvironment;
-
-
-/***/ }),
-/* 87 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(process) {/**
- * Copyright 2013-2015, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- * @providesModule invariant
- */
-
-
-
-/**
- * Use invariant() to assert state which your program assumes to be true.
- *
- * Provide sprintf-style format (only %s is supported) and arguments
- * to provide information about what broke and what you were
- * expecting.
- *
- * The invariant message will be stripped in production, but the invariant
- * will remain to ensure logic does not differ in production.
- */
-
-var __ENV__ = process.env.NODE_ENV; // env lookup is slow in Node
-var invariant = function (condition, format, a, b, c, d, e, f) {
-  if (__ENV__ !== 'production') {
-    if (format === undefined) {
-      throw new Error('invariant requires an error message argument');
-    }
-  }
-
-  if (!condition) {
-    var error;
-    if (format === undefined) {
-      error = new Error('Minified exception occurred; use the non-minified dev environment ' + 'for the full error message and additional helpful warnings.');
-    } else {
-      var args = [a, b, c, d, e, f];
-      var argIndex = 0;
-      error = new Error('Invariant Violation: ' + format.replace(/%s/g, function () {
-        return args[argIndex++];
-      }));
-    }
-
-    error.framesToPop = 1; // we don't care about invariant's own frame
-    throw error;
-  }
-};
-
-module.exports = invariant;
-
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
-
-/***/ }),
-/* 88 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var replace = String.prototype.replace;
-var percentTwenties = /%20/g;
-
-module.exports = {
-    'default': 'RFC3986',
-    formatters: {
-        RFC1738: function (value) {
-            return replace.call(value, percentTwenties, '+');
-        },
-        RFC3986: function (value) {
-            return value;
-        }
-    },
-    RFC1738: 'RFC1738',
-    RFC3986: 'RFC3986'
-};
-
-
-/***/ }),
-/* 89 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var has = Object.prototype.hasOwnProperty;
-
-var hexTable = (function () {
-    var array = [];
-    for (var i = 0; i < 256; ++i) {
-        array.push('%' + ((i < 16 ? '0' : '') + i.toString(16)).toUpperCase());
-    }
-
-    return array;
-}());
-
-exports.arrayToObject = function (source, options) {
-    var obj = options && options.plainObjects ? Object.create(null) : {};
-    for (var i = 0; i < source.length; ++i) {
-        if (typeof source[i] !== 'undefined') {
-            obj[i] = source[i];
-        }
-    }
-
-    return obj;
-};
-
-exports.merge = function (target, source, options) {
-    if (!source) {
-        return target;
-    }
-
-    if (typeof source !== 'object') {
-        if (Array.isArray(target)) {
-            target.push(source);
-        } else if (typeof target === 'object') {
-            if (options.plainObjects || options.allowPrototypes || !has.call(Object.prototype, source)) {
-                target[source] = true;
-            }
-        } else {
-            return [target, source];
-        }
-
-        return target;
-    }
-
-    if (typeof target !== 'object') {
-        return [target].concat(source);
-    }
-
-    var mergeTarget = target;
-    if (Array.isArray(target) && !Array.isArray(source)) {
-        mergeTarget = exports.arrayToObject(target, options);
-    }
-
-    if (Array.isArray(target) && Array.isArray(source)) {
-        source.forEach(function (item, i) {
-            if (has.call(target, i)) {
-                if (target[i] && typeof target[i] === 'object') {
-                    target[i] = exports.merge(target[i], item, options);
-                } else {
-                    target.push(item);
-                }
-            } else {
-                target[i] = item;
-            }
-        });
-        return target;
-    }
-
-    return Object.keys(source).reduce(function (acc, key) {
-        var value = source[key];
-
-        if (Object.prototype.hasOwnProperty.call(acc, key)) {
-            acc[key] = exports.merge(acc[key], value, options);
-        } else {
-            acc[key] = value;
-        }
-        return acc;
-    }, mergeTarget);
-};
-
-exports.decode = function (str) {
-    try {
-        return decodeURIComponent(str.replace(/\+/g, ' '));
-    } catch (e) {
-        return str;
-    }
-};
-
-exports.encode = function (str) {
-    // This code was originally written by Brian White (mscdex) for the io.js core querystring library.
-    // It has been adapted here for stricter adherence to RFC 3986
-    if (str.length === 0) {
-        return str;
-    }
-
-    var string = typeof str === 'string' ? str : String(str);
-
-    var out = '';
-    for (var i = 0; i < string.length; ++i) {
-        var c = string.charCodeAt(i);
-
-        if (
-            c === 0x2D || // -
-            c === 0x2E || // .
-            c === 0x5F || // _
-            c === 0x7E || // ~
-            (c >= 0x30 && c <= 0x39) || // 0-9
-            (c >= 0x41 && c <= 0x5A) || // a-z
-            (c >= 0x61 && c <= 0x7A) // A-Z
-        ) {
-            out += string.charAt(i);
-            continue;
-        }
-
-        if (c < 0x80) {
-            out = out + hexTable[c];
-            continue;
-        }
-
-        if (c < 0x800) {
-            out = out + (hexTable[0xC0 | (c >> 6)] + hexTable[0x80 | (c & 0x3F)]);
-            continue;
-        }
-
-        if (c < 0xD800 || c >= 0xE000) {
-            out = out + (hexTable[0xE0 | (c >> 12)] + hexTable[0x80 | ((c >> 6) & 0x3F)] + hexTable[0x80 | (c & 0x3F)]);
-            continue;
-        }
-
-        i += 1;
-        c = 0x10000 + (((c & 0x3FF) << 10) | (string.charCodeAt(i) & 0x3FF));
-        out += hexTable[0xF0 | (c >> 18)] + hexTable[0x80 | ((c >> 12) & 0x3F)] + hexTable[0x80 | ((c >> 6) & 0x3F)] + hexTable[0x80 | (c & 0x3F)]; // eslint-disable-line max-len
-    }
-
-    return out;
-};
-
-exports.compact = function (obj, references) {
-    if (typeof obj !== 'object' || obj === null) {
-        return obj;
-    }
-
-    var refs = references || [];
-    var lookup = refs.indexOf(obj);
-    if (lookup !== -1) {
-        return refs[lookup];
-    }
-
-    refs.push(obj);
-
-    if (Array.isArray(obj)) {
-        var compacted = [];
-
-        for (var i = 0; i < obj.length; ++i) {
-            if (obj[i] && typeof obj[i] === 'object') {
-                compacted.push(exports.compact(obj[i], refs));
-            } else if (typeof obj[i] !== 'undefined') {
-                compacted.push(obj[i]);
-            }
-        }
-
-        return compacted;
-    }
-
-    var keys = Object.keys(obj);
-    keys.forEach(function (key) {
-        obj[key] = exports.compact(obj[key], refs);
-    });
-
-    return obj;
-};
-
-exports.isRegExp = function (obj) {
-    return Object.prototype.toString.call(obj) === '[object RegExp]';
-};
-
-exports.isBuffer = function (obj) {
-    if (obj === null || typeof obj === 'undefined') {
-        return false;
-    }
-
-    return !!(obj.constructor && obj.constructor.isBuffer && obj.constructor.isBuffer(obj));
-};
-
-
-/***/ }),
+/* 83 */,
+/* 84 */,
+/* 85 */,
+/* 86 */,
+/* 87 */,
+/* 88 */,
+/* 89 */,
 /* 90 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -10554,451 +9677,7 @@ function getIteratorFn(maybeIterable) {
 module.exports = getIteratorFn;
 
 /***/ }),
-/* 94 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// Generated by CoffeeScript 1.10.0
-var slice = [].slice;
-
-(function(root, factory) {
-  if (('function' === "function") && (__webpack_require__(224) != null)) {
-    return !(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
-				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
-				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-  } else if (typeof exports !== "undefined" && exports !== null) {
-    return module.exports = factory();
-  } else {
-    return root.UrlPattern = factory();
-  }
-})(this, function() {
-  var P, UrlPattern, astNodeContainsSegmentsForProvidedParams, astNodeToNames, astNodeToRegexString, baseAstNodeToRegexString, concatMap, defaultOptions, escapeForRegex, getParam, keysAndValuesToObject, newParser, regexGroupCount, stringConcatMap, stringify;
-  escapeForRegex = function(string) {
-    return string.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-  };
-  concatMap = function(array, f) {
-    var i, length, results;
-    results = [];
-    i = -1;
-    length = array.length;
-    while (++i < length) {
-      results = results.concat(f(array[i]));
-    }
-    return results;
-  };
-  stringConcatMap = function(array, f) {
-    var i, length, result;
-    result = '';
-    i = -1;
-    length = array.length;
-    while (++i < length) {
-      result += f(array[i]);
-    }
-    return result;
-  };
-  regexGroupCount = function(regex) {
-    return (new RegExp(regex.toString() + '|')).exec('').length - 1;
-  };
-  keysAndValuesToObject = function(keys, values) {
-    var i, key, length, object, value;
-    object = {};
-    i = -1;
-    length = keys.length;
-    while (++i < length) {
-      key = keys[i];
-      value = values[i];
-      if (value == null) {
-        continue;
-      }
-      if (object[key] != null) {
-        if (!Array.isArray(object[key])) {
-          object[key] = [object[key]];
-        }
-        object[key].push(value);
-      } else {
-        object[key] = value;
-      }
-    }
-    return object;
-  };
-  P = {};
-  P.Result = function(value, rest) {
-    this.value = value;
-    this.rest = rest;
-  };
-  P.Tagged = function(tag, value) {
-    this.tag = tag;
-    this.value = value;
-  };
-  P.tag = function(tag, parser) {
-    return function(input) {
-      var result, tagged;
-      result = parser(input);
-      if (result == null) {
-        return;
-      }
-      tagged = new P.Tagged(tag, result.value);
-      return new P.Result(tagged, result.rest);
-    };
-  };
-  P.regex = function(regex) {
-    return function(input) {
-      var matches, result;
-      matches = regex.exec(input);
-      if (matches == null) {
-        return;
-      }
-      result = matches[0];
-      return new P.Result(result, input.slice(result.length));
-    };
-  };
-  P.sequence = function() {
-    var parsers;
-    parsers = 1 <= arguments.length ? slice.call(arguments, 0) : [];
-    return function(input) {
-      var i, length, parser, rest, result, values;
-      i = -1;
-      length = parsers.length;
-      values = [];
-      rest = input;
-      while (++i < length) {
-        parser = parsers[i];
-        result = parser(rest);
-        if (result == null) {
-          return;
-        }
-        values.push(result.value);
-        rest = result.rest;
-      }
-      return new P.Result(values, rest);
-    };
-  };
-  P.pick = function() {
-    var indexes, parsers;
-    indexes = arguments[0], parsers = 2 <= arguments.length ? slice.call(arguments, 1) : [];
-    return function(input) {
-      var array, result;
-      result = P.sequence.apply(P, parsers)(input);
-      if (result == null) {
-        return;
-      }
-      array = result.value;
-      result.value = array[indexes];
-      return result;
-    };
-  };
-  P.string = function(string) {
-    var length;
-    length = string.length;
-    return function(input) {
-      if (input.slice(0, length) === string) {
-        return new P.Result(string, input.slice(length));
-      }
-    };
-  };
-  P.lazy = function(fn) {
-    var cached;
-    cached = null;
-    return function(input) {
-      if (cached == null) {
-        cached = fn();
-      }
-      return cached(input);
-    };
-  };
-  P.baseMany = function(parser, end, stringResult, atLeastOneResultRequired, input) {
-    var endResult, parserResult, rest, results;
-    rest = input;
-    results = stringResult ? '' : [];
-    while (true) {
-      if (end != null) {
-        endResult = end(rest);
-        if (endResult != null) {
-          break;
-        }
-      }
-      parserResult = parser(rest);
-      if (parserResult == null) {
-        break;
-      }
-      if (stringResult) {
-        results += parserResult.value;
-      } else {
-        results.push(parserResult.value);
-      }
-      rest = parserResult.rest;
-    }
-    if (atLeastOneResultRequired && results.length === 0) {
-      return;
-    }
-    return new P.Result(results, rest);
-  };
-  P.many1 = function(parser) {
-    return function(input) {
-      return P.baseMany(parser, null, false, true, input);
-    };
-  };
-  P.concatMany1Till = function(parser, end) {
-    return function(input) {
-      return P.baseMany(parser, end, true, true, input);
-    };
-  };
-  P.firstChoice = function() {
-    var parsers;
-    parsers = 1 <= arguments.length ? slice.call(arguments, 0) : [];
-    return function(input) {
-      var i, length, parser, result;
-      i = -1;
-      length = parsers.length;
-      while (++i < length) {
-        parser = parsers[i];
-        result = parser(input);
-        if (result != null) {
-          return result;
-        }
-      }
-    };
-  };
-  newParser = function(options) {
-    var U;
-    U = {};
-    U.wildcard = P.tag('wildcard', P.string(options.wildcardChar));
-    U.optional = P.tag('optional', P.pick(1, P.string(options.optionalSegmentStartChar), P.lazy(function() {
-      return U.pattern;
-    }), P.string(options.optionalSegmentEndChar)));
-    U.name = P.regex(new RegExp("^[" + options.segmentNameCharset + "]+"));
-    U.named = P.tag('named', P.pick(1, P.string(options.segmentNameStartChar), P.lazy(function() {
-      return U.name;
-    })));
-    U.escapedChar = P.pick(1, P.string(options.escapeChar), P.regex(/^./));
-    U["static"] = P.tag('static', P.concatMany1Till(P.firstChoice(P.lazy(function() {
-      return U.escapedChar;
-    }), P.regex(/^./)), P.firstChoice(P.string(options.segmentNameStartChar), P.string(options.optionalSegmentStartChar), P.string(options.optionalSegmentEndChar), U.wildcard)));
-    U.token = P.lazy(function() {
-      return P.firstChoice(U.wildcard, U.optional, U.named, U["static"]);
-    });
-    U.pattern = P.many1(P.lazy(function() {
-      return U.token;
-    }));
-    return U;
-  };
-  defaultOptions = {
-    escapeChar: '\\',
-    segmentNameStartChar: ':',
-    segmentValueCharset: 'a-zA-Z0-9-_~ %',
-    segmentNameCharset: 'a-zA-Z0-9',
-    optionalSegmentStartChar: '(',
-    optionalSegmentEndChar: ')',
-    wildcardChar: '*'
-  };
-  baseAstNodeToRegexString = function(astNode, segmentValueCharset) {
-    if (Array.isArray(astNode)) {
-      return stringConcatMap(astNode, function(node) {
-        return baseAstNodeToRegexString(node, segmentValueCharset);
-      });
-    }
-    switch (astNode.tag) {
-      case 'wildcard':
-        return '(.*?)';
-      case 'named':
-        return "([" + segmentValueCharset + "]+)";
-      case 'static':
-        return escapeForRegex(astNode.value);
-      case 'optional':
-        return '(?:' + baseAstNodeToRegexString(astNode.value, segmentValueCharset) + ')?';
-    }
-  };
-  astNodeToRegexString = function(astNode, segmentValueCharset) {
-    if (segmentValueCharset == null) {
-      segmentValueCharset = defaultOptions.segmentValueCharset;
-    }
-    return '^' + baseAstNodeToRegexString(astNode, segmentValueCharset) + '$';
-  };
-  astNodeToNames = function(astNode) {
-    if (Array.isArray(astNode)) {
-      return concatMap(astNode, astNodeToNames);
-    }
-    switch (astNode.tag) {
-      case 'wildcard':
-        return ['_'];
-      case 'named':
-        return [astNode.value];
-      case 'static':
-        return [];
-      case 'optional':
-        return astNodeToNames(astNode.value);
-    }
-  };
-  getParam = function(params, key, nextIndexes, sideEffects) {
-    var index, maxIndex, result, value;
-    if (sideEffects == null) {
-      sideEffects = false;
-    }
-    value = params[key];
-    if (value == null) {
-      if (sideEffects) {
-        throw new Error("no values provided for key `" + key + "`");
-      } else {
-        return;
-      }
-    }
-    index = nextIndexes[key] || 0;
-    maxIndex = Array.isArray(value) ? value.length - 1 : 0;
-    if (index > maxIndex) {
-      if (sideEffects) {
-        throw new Error("too few values provided for key `" + key + "`");
-      } else {
-        return;
-      }
-    }
-    result = Array.isArray(value) ? value[index] : value;
-    if (sideEffects) {
-      nextIndexes[key] = index + 1;
-    }
-    return result;
-  };
-  astNodeContainsSegmentsForProvidedParams = function(astNode, params, nextIndexes) {
-    var i, length;
-    if (Array.isArray(astNode)) {
-      i = -1;
-      length = astNode.length;
-      while (++i < length) {
-        if (astNodeContainsSegmentsForProvidedParams(astNode[i], params, nextIndexes)) {
-          return true;
-        }
-      }
-      return false;
-    }
-    switch (astNode.tag) {
-      case 'wildcard':
-        return getParam(params, '_', nextIndexes, false) != null;
-      case 'named':
-        return getParam(params, astNode.value, nextIndexes, false) != null;
-      case 'static':
-        return false;
-      case 'optional':
-        return astNodeContainsSegmentsForProvidedParams(astNode.value, params, nextIndexes);
-    }
-  };
-  stringify = function(astNode, params, nextIndexes) {
-    if (Array.isArray(astNode)) {
-      return stringConcatMap(astNode, function(node) {
-        return stringify(node, params, nextIndexes);
-      });
-    }
-    switch (astNode.tag) {
-      case 'wildcard':
-        return getParam(params, '_', nextIndexes, true);
-      case 'named':
-        return getParam(params, astNode.value, nextIndexes, true);
-      case 'static':
-        return astNode.value;
-      case 'optional':
-        if (astNodeContainsSegmentsForProvidedParams(astNode.value, params, nextIndexes)) {
-          return stringify(astNode.value, params, nextIndexes);
-        } else {
-          return '';
-        }
-    }
-  };
-  UrlPattern = function(arg1, arg2) {
-    var groupCount, options, parsed, parser, withoutWhitespace;
-    if (arg1 instanceof UrlPattern) {
-      this.isRegex = arg1.isRegex;
-      this.regex = arg1.regex;
-      this.ast = arg1.ast;
-      this.names = arg1.names;
-      return;
-    }
-    this.isRegex = arg1 instanceof RegExp;
-    if (!(('string' === typeof arg1) || this.isRegex)) {
-      throw new TypeError('argument must be a regex or a string');
-    }
-    if (this.isRegex) {
-      this.regex = arg1;
-      if (arg2 != null) {
-        if (!Array.isArray(arg2)) {
-          throw new Error('if first argument is a regex the second argument may be an array of group names but you provided something else');
-        }
-        groupCount = regexGroupCount(this.regex);
-        if (arg2.length !== groupCount) {
-          throw new Error("regex contains " + groupCount + " groups but array of group names contains " + arg2.length);
-        }
-        this.names = arg2;
-      }
-      return;
-    }
-    if (arg1 === '') {
-      throw new Error('argument must not be the empty string');
-    }
-    withoutWhitespace = arg1.replace(/\s+/g, '');
-    if (withoutWhitespace !== arg1) {
-      throw new Error('argument must not contain whitespace');
-    }
-    options = {
-      escapeChar: (arg2 != null ? arg2.escapeChar : void 0) || defaultOptions.escapeChar,
-      segmentNameStartChar: (arg2 != null ? arg2.segmentNameStartChar : void 0) || defaultOptions.segmentNameStartChar,
-      segmentNameCharset: (arg2 != null ? arg2.segmentNameCharset : void 0) || defaultOptions.segmentNameCharset,
-      segmentValueCharset: (arg2 != null ? arg2.segmentValueCharset : void 0) || defaultOptions.segmentValueCharset,
-      optionalSegmentStartChar: (arg2 != null ? arg2.optionalSegmentStartChar : void 0) || defaultOptions.optionalSegmentStartChar,
-      optionalSegmentEndChar: (arg2 != null ? arg2.optionalSegmentEndChar : void 0) || defaultOptions.optionalSegmentEndChar,
-      wildcardChar: (arg2 != null ? arg2.wildcardChar : void 0) || defaultOptions.wildcardChar
-    };
-    parser = newParser(options);
-    parsed = parser.pattern(arg1);
-    if (parsed == null) {
-      throw new Error("couldn't parse pattern");
-    }
-    if (parsed.rest !== '') {
-      throw new Error("could only partially parse pattern");
-    }
-    this.ast = parsed.value;
-    this.regex = new RegExp(astNodeToRegexString(this.ast, options.segmentValueCharset));
-    this.names = astNodeToNames(this.ast);
-  };
-  UrlPattern.prototype.match = function(url) {
-    var groups, match;
-    match = this.regex.exec(url);
-    if (match == null) {
-      return null;
-    }
-    groups = match.slice(1);
-    if (this.names) {
-      return keysAndValuesToObject(this.names, groups);
-    } else {
-      return groups;
-    }
-  };
-  UrlPattern.prototype.stringify = function(params) {
-    if (params == null) {
-      params = {};
-    }
-    if (this.isRegex) {
-      throw new Error("can't stringify patterns generated from a regex");
-    }
-    if (params !== Object(params)) {
-      throw new Error("argument must be an object or undefined");
-    }
-    return stringify(this.ast, params, {});
-  };
-  UrlPattern.escapeForRegex = escapeForRegex;
-  UrlPattern.concatMap = concatMap;
-  UrlPattern.stringConcatMap = stringConcatMap;
-  UrlPattern.regexGroupCount = regexGroupCount;
-  UrlPattern.keysAndValuesToObject = keysAndValuesToObject;
-  UrlPattern.P = P;
-  UrlPattern.newParser = newParser;
-  UrlPattern.defaultOptions = defaultOptions;
-  UrlPattern.astNodeToRegexString = astNodeToRegexString;
-  UrlPattern.astNodeToNames = astNodeToNames;
-  UrlPattern.getParam = getParam;
-  UrlPattern.astNodeContainsSegmentsForProvidedParams = astNodeContainsSegmentsForProvidedParams;
-  UrlPattern.stringify = stringify;
-  return UrlPattern;
-});
-
-
-/***/ }),
+/* 94 */,
 /* 95 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -11014,8 +9693,6 @@ var _createClass = function () { function defineProperties(target, props) { for 
 var _react = __webpack_require__(5);
 
 var _react2 = _interopRequireDefault(_react);
-
-var _reactRouterComponent = __webpack_require__(198);
 
 var _Toolbar = __webpack_require__(105);
 
@@ -11033,6 +9710,14 @@ var _Vote = __webpack_require__(226);
 
 var _Vote2 = _interopRequireDefault(_Vote);
 
+var _Storage = __webpack_require__(56);
+
+var _Storage2 = _interopRequireDefault(_Storage);
+
+var _Event = __webpack_require__(227);
+
+var _Event2 = _interopRequireDefault(_Event);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -11047,7 +9732,24 @@ var App = function (_React$Component) {
   function App() {
     _classCallCheck(this, App);
 
-    return _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).apply(this, arguments));
+    var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this));
+
+    _this.state = { appState: _this.getAppState(), isVoting: false };
+
+    _Event2.default.on("login", function () {
+      _this.setState({ appState: _this.getAppState() });
+    });
+    _Event2.default.on("voteView", function () {
+      _this.setState({
+        isVoting: !_this.state.isVoting
+      });
+      setTimeout(function () {
+        _this.setState({
+          appState: _this.getAppState()
+        });
+      });
+    });
+    return _this;
   }
 
   _createClass(App, [{
@@ -11056,14 +9758,31 @@ var App = function (_React$Component) {
       return _react2.default.createElement(
         'div',
         null,
-        _react2.default.createElement(_LoginScreen2.default, null),
-        _react2.default.createElement(
-          _reactRouterComponent.Locations,
-          null,
-          _react2.default.createElement(_reactRouterComponent.Location, { path: '/', handler: _Artists2.default }),
-          _react2.default.createElement(_reactRouterComponent.Location, { path: '/vote', handler: _Vote2.default })
-        )
+        this.getView()
       );
+    }
+  }, {
+    key: 'getView',
+    value: function getView() {
+      if (this.state.appState === 2) {
+        return _react2.default.createElement(_LoginScreen2.default, null);
+      } else if (this.state.appState === 3) {
+        return _react2.default.createElement(_Vote2.default, null);
+      }
+      return _react2.default.createElement(_Artists2.default, null);
+    }
+  }, {
+    key: 'getAppState',
+    value: function getAppState() {
+      var appState = 1;
+
+      if (!_Storage2.default.currentUser()) {
+        appState = 2;
+      } else if (this.state && this.state.isVoting) {
+        appState = 3;
+      }
+
+      return appState;
     }
   }]);
 
@@ -11509,6 +10228,10 @@ var _artists = __webpack_require__(96);
 
 var _artists2 = _interopRequireDefault(_artists);
 
+var _Event = __webpack_require__(227);
+
+var _Event2 = _interopRequireDefault(_Event);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -11536,9 +10259,15 @@ var Artists = function (_React$Component) {
           'div',
           null,
           _react2.default.createElement(
-            'a',
-            { className: 'btn btn-primary btn-vote', href: '/vote' },
-            'Klicka h\xE4r \xE4r att r\xF6sta!'
+            'div',
+            { className: 'btn-vote-wrapper' },
+            _react2.default.createElement(
+              'div',
+              { className: 'btn btn-primary btn-vote', onClick: function onClick() {
+                  _Event2.default.trigger("voteView");
+                } },
+              'Klicka h\xE4r \xE4r att r\xF6sta!'
+            )
           )
         ),
         _artists2.default.artists.map(function (artist) {
@@ -11636,6 +10365,10 @@ var _Storage = __webpack_require__(56);
 
 var _Storage2 = _interopRequireDefault(_Storage);
 
+var _Event = __webpack_require__(227);
+
+var _Event2 = _interopRequireDefault(_Event);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -11662,7 +10395,6 @@ var LoginScreen = function (_React$Component) {
     key: 'componentWillMount',
     value: function componentWillMount() {
       this.setState({
-        hasUserName: !!_Storage2.default.currentUser(),
         name: ''
       });
     }
@@ -11676,7 +10408,7 @@ var LoginScreen = function (_React$Component) {
     value: function handleClick() {
       if (this.state.name.length > 3) {
         _Storage2.default.currentUser(this.state.name);
-        this.setState({ hasUserName: true });
+        _Event2.default.trigger("login");
       } else {
         alert("Din lata jävel.");
       }
@@ -11684,7 +10416,7 @@ var LoginScreen = function (_React$Component) {
   }, {
     key: 'render',
     value: function render() {
-      return this.state.hasUserName ? null : _react2.default.createElement(
+      return _react2.default.createElement(
         'div',
         { className: 'loginScreen' },
         _react2.default.createElement(
@@ -12533,129 +11265,11 @@ if (performance.now) {
 module.exports = performanceNow;
 
 /***/ }),
-/* 121 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/*!
- * for-in <https://github.com/jonschlinkert/for-in>
- *
- * Copyright (c) 2014-2017, Jon Schlinkert.
- * Released under the MIT License.
- */
-
-
-
-module.exports = function forIn(obj, fn, thisArg) {
-  for (var key in obj) {
-    if (fn.call(thisArg, obj[key], key, obj) === false) {
-      break;
-    }
-  }
-};
-
-
-/***/ }),
-/* 122 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/*!
- * for-own <https://github.com/jonschlinkert/for-own>
- *
- * Copyright (c) 2014-2017, Jon Schlinkert.
- * Released under the MIT License.
- */
-
-
-
-var forIn = __webpack_require__(121);
-var hasOwn = Object.prototype.hasOwnProperty;
-
-module.exports = function forOwn(obj, fn, thisArg) {
-  forIn(obj, function(val, key) {
-    if (hasOwn.call(obj, key)) {
-      return fn.call(thisArg, obj[key], key, obj);
-    }
-  });
-};
-
-
-/***/ }),
-/* 123 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/*!
- * is-equal-shallow <https://github.com/jonschlinkert/is-equal-shallow>
- *
- * Copyright (c) 2015, Jon Schlinkert.
- * Licensed under the MIT License.
- */
-
-
-
-var isPrimitive = __webpack_require__(125);
-
-module.exports = function isEqual(a, b) {
-  if (!a && !b) { return true; }
-  if (!a && b || a && !b) { return false; }
-
-  var numKeysA = 0, numKeysB = 0, key;
-  for (key in b) {
-    numKeysB++;
-    if (!isPrimitive(b[key]) || !a.hasOwnProperty(key) || (a[key] !== b[key])) {
-      return false;
-    }
-  }
-  for (key in a) {
-    numKeysA++;
-  }
-  return numKeysA === numKeysB;
-};
-
-
-/***/ }),
-/* 124 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/*!
- * is-extendable <https://github.com/jonschlinkert/is-extendable>
- *
- * Copyright (c) 2015, Jon Schlinkert.
- * Licensed under the MIT License.
- */
-
-
-
-module.exports = function isExtendable(val) {
-  return typeof val !== 'undefined' && val !== null
-    && (typeof val === 'object' || typeof val === 'function');
-};
-
-
-/***/ }),
-/* 125 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/*!
- * is-primitive <https://github.com/jonschlinkert/is-primitive>
- *
- * Copyright (c) 2014-2015, Jon Schlinkert.
- * Licensed under the MIT License.
- */
-
-
-
-// see http://jsperf.com/testing-value-is-primitive/7
-module.exports = function isPrimitive(value) {
-  return value == null || (typeof value !== 'function' && typeof value !== 'object');
-};
-
-
-/***/ }),
+/* 121 */,
+/* 122 */,
+/* 123 */,
+/* 124 */,
+/* 125 */,
 /* 126 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -22630,1156 +21244,18 @@ var ReactMount = __webpack_require__(71);
 module.exports = ReactMount.renderSubtreeIntoContainer;
 
 /***/ }),
-/* 198 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var Router                    = __webpack_require__(202);
-var Route                     = __webpack_require__(201);
-var Link                      = __webpack_require__(200);
-
-var RouterMixin               = __webpack_require__(85);
-var RouteRenderingMixin       = __webpack_require__(84);
-
-var NavigatableMixin          = __webpack_require__(83);
-
-var environment               = __webpack_require__(26);
-
-var CaptureClicks             = __webpack_require__(199);
-
-var URLPattern                = __webpack_require__(94);
-
-var exportsObject = {
-  Locations: Router.Locations,
-  Pages: Router.Pages,
-
-  Location: Route.Route,
-  Page: Route.Route,
-  NotFound: Route.NotFound,
-
-  Link: Link,
-
-  environment: environment,
-
-  RouterMixin: RouterMixin,
-  RouteRenderingMixin: RouteRenderingMixin,
-
-  NavigatableMixin: NavigatableMixin,
-  CaptureClicks: CaptureClicks
-};
-
-module.exports = exportsObject;
-
-
-/***/ }),
-/* 199 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var React       = __webpack_require__(5);
-var urllite     = __webpack_require__(223);
-var Environment = __webpack_require__(26);
-var HashEnvironment = __webpack_require__(86);
-var assign      = Object.assign || __webpack_require__(4);
-var omit        = __webpack_require__(27);
-
-var PROP_TYPES = {
-  component: React.PropTypes.oneOfType([
-    React.PropTypes.string,
-    React.PropTypes.func
-  ]).isRequired,
-  environment: React.PropTypes.object,
-  gotoURL: React.PropTypes.func
-};
-
-var PROP_KEYS = Object.keys(PROP_TYPES);
-
-/**
- * A container component which captures <a> clicks and, if there's a matching
- * route defined, routes them.
- */
-var CaptureClicks = React.createClass({
-  displayName: 'CaptureClicks',
-
-  propTypes: PROP_TYPES,
-
-  getDefaultProps: function() {
-    return {
-      component: 'div',
-      environment: Environment.defaultEnvironment,
-      gotoURL: function(url) {
-        // We should really just be allowing the event's default action, be we
-        // can't make the decision to do that synchronously.
-        window.location.href = url;
-      }
-    };
-  },
-
-  onClick: function(e) {
-    if (this.props.onClick) {
-      var shouldProceed = this.props.onClick(e);
-      if (shouldProceed === false) return;
-    }
-
-    // Ignore canceled events, modified clicks, and right clicks.
-    if (e.defaultPrevented) {
-      return;
-    }
-
-    if (e.metaKey || e.ctrlKey || e.shiftKey) {
-      return;
-    }
-
-    if (e.button !== 0) {
-      return;
-    }
-
-    // Get the <a> element.
-    var el = e.target;
-    while (el && el.nodeName !== 'A') {
-      el = el.parentNode;
-    }
-
-    // Ignore clicks from non-a elements.
-    if (!el) {
-      return;
-    }
-
-    // Ignore the click if the element has a target.
-    if (el.target && el.target !== '_self') {
-      return;
-    }
-
-    // Ignore the click if it's a download link. (We use this method of
-    // detecting the presence of the attribute for old IE versions.)
-    if (el.attributes.download) {
-      return;
-    }
-
-    // Ignore hash (used often instead of javascript:void(0) in strict CSP envs)
-    if (el.getAttribute('href') === '#' && !(this.props.environment instanceof HashEnvironment)) {
-      return;
-    }
-
-    // Use a regular expression to parse URLs instead of relying on the browser
-    // to do it for us (because IE).
-    var url = urllite(el.href);
-    var windowURL = urllite(window.location.href);
-
-    // Ignore links that don't share a protocol and host with ours.
-    if (url.protocol !== windowURL.protocol || url.host !== windowURL.host) {
-      return;
-    }
-
-    // Ignore 'rel="external"' links.
-    if (el.rel && /(?:^|\s+)external(?:\s+|$)/.test(el.rel)) {
-      return;
-    }
-
-    // Prevent :focus from sticking; preventDefault() stops blur in some browsers
-    el.blur();
-    e.preventDefault();
-
-    // Mark if any of our routers matched. If they didn't, we'll call gotoURL.
-    var matched = false;
-
-    var onBeforeNavigation = function(path, navigation, match) {
-      if (match && match.match) {
-        matched = true;
-      }
-    }
-
-    var gotoURL = this.props.gotoURL;
-    this.props.environment.navigate(
-      url.pathname + (url.hash.length > 1 ? url.hash : ''),
-      {onBeforeNavigation: onBeforeNavigation},
-      function(err, info) {
-        if (err) {
-          throw err;
-        }
-        // No routers matched - so we'll escape out using gotoURL.
-        if (!matched) gotoURL(el.href);
-      });
-  },
-
-  render: function() {
-    var props = assign({}, this.props, {
-      onClick: this.onClick
-    });
-    props = omit(props, PROP_KEYS);
-    return React.createElement(this.props.component, props, this.props.children);
-  }
-
-});
-
-module.exports = CaptureClicks;
-
-
-/***/ }),
-/* 200 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var React             = __webpack_require__(5);
-var NavigatableMixin  = __webpack_require__(83);
-var Environment       = __webpack_require__(26);
-var assign            = Object.assign || __webpack_require__(4);
-var omit              = __webpack_require__(27);
-
-/**
- * Link.
- *
- * A basic navigatable component which renders into <a> DOM element and handles
- * onClick event by transitioning onto different route (defined by
- * this.props.href).
- */
-var Link = React.createClass({
-  mixins: [NavigatableMixin],
-
-  displayName: 'Link',
-
-  propTypes: {
-    href: React.PropTypes.string.isRequired,
-    global: React.PropTypes.bool,
-    globalHash: React.PropTypes.bool
-  },
-
-  onClick: function(e) {
-    if (this.props.onClick) {
-      this.props.onClick(e);
-    }
-
-    // return if the link target is external
-    if (this.props.href.match(/^([a-z-]+:|\/\/)/)) return;
-
-    // return if the user did a middle-click, right-click, or used a modifier
-    // key (like ctrl-click, meta-click, shift-click, etc.)
-    if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
-
-    if (!e.defaultPrevented) {
-      e.preventDefault();
-      this._navigate(this.props.href, function(err) {
-        if (err) {
-          throw err;
-        }
-      });
-    }
-  },
-
-  _navigationParams: function() {
-    var params = {};
-    for (var k in this.props) {
-      if (!this.constructor.propTypes[k]) {
-        params[k] = this.props[k];
-      }
-    }
-    return params;
-  },
-
-  _createHref: function() {
-    return this.props.global ?
-      Environment.defaultEnvironment.makeHref(this.props.href) :
-      this.makeHref(this.props.href);
-  },
-
-  _navigate: function(path, cb) {
-    if (this.props.globalHash) {
-      return Environment.hashEnvironment.navigate(path, cb);
-    }
-
-    if (this.props.global) {
-      return Environment.defaultEnvironment.navigate(path, cb);
-    }
-
-    return this.navigate(path, this._navigationParams(), cb);
-  },
-
-  render: function() {
-    var props = assign({}, this.props, {
-      onClick: this.onClick,
-      href: this._createHref()
-    });
-    props = omit(props, ['global', 'globalHash', '_query']);
-    return React.createElement('a', props, this.props.children);
-  }
-});
-
-module.exports = Link;
-
-
-/***/ }),
-/* 201 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var React = __webpack_require__(5);
-
-function createClass(name) {
-  return React.createClass({
-    displayName: name,
-    propTypes: {
-      handler: React.PropTypes.oneOfType([
-        // Can be ReactElement or ReactComponent, unfortunately there is no way to typecheck
-        // ReactComponent (that I know of)
-        React.PropTypes.element,
-        React.PropTypes.func
-      ]),
-      path: name === 'NotFound' ?
-        function(props, propName) {
-          if (props[propName]) throw new Error("Don't pass a `path` to NotFound.");
-        }
-        : React.PropTypes.oneOfType([
-            React.PropTypes.string,
-            React.PropTypes.instanceOf(RegExp)
-          ]).isRequired,
-      urlPatternOptions: React.PropTypes.oneOfType([
-        React.PropTypes.arrayOf(React.PropTypes.string),
-        React.PropTypes.object
-      ])
-    },
-    getDefaultProps: function() {
-      if (name === 'NotFound') {
-        return {path: null};
-      }
-      return {};
-    },
-    render: function() {
-      throw new Error(name + " is not meant to be directly rendered.");
-    }
-  });
-}
-
-module.exports = {
-  /**
-   * Regular route descriptor.
-   *
-   * @param {Object} spec
-   */
-  Route: createClass('Route'),
-  /**
-   * Catch all route descriptor.
-   *
-   * @param {Object} spec
-   */
-  NotFound: createClass('NotFound')
-};
-
-
-/***/ }),
-/* 202 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var React                     = __webpack_require__(5);
-var RouterMixin               = __webpack_require__(85);
-var RouteRenderingMixin       = __webpack_require__(84);
-var assign                    = Object.assign || __webpack_require__(4);
-var omit                      = __webpack_require__(27);
-
-// These are keys to omit - useful for preventing 15.2.0 warning regarding unknown props on DOM els
-var PROP_KEYS = ['component']
-  .concat(Object.keys(RouterMixin.propTypes))
-  .concat(Object.keys(RouteRenderingMixin.propTypes));
-
-/**
- * Create a new router class
- *
- * @param {String} name
- * @param {ReactComponent} component
- */
-function createRouter(name, component) {
-
-  return React.createClass({
-
-    mixins: [RouterMixin, RouteRenderingMixin],
-
-    displayName: name,
-
-    propTypes: {
-      component: React.PropTypes.oneOfType([
-        React.PropTypes.string,
-        React.PropTypes.element,
-        React.PropTypes.func
-      ])
-    },
-
-    getRoutes: function(props) {
-      return props.children;
-    },
-
-    getDefaultProps: function() {
-      return {
-        component: component
-      };
-    },
-
-    render: function() {
-      // Render the Route's handler.
-      var handler = this.renderRouteHandler();
-
-      if (!this.props.component) {
-        return handler;
-      } else {
-        // Pass all props except this component to the Router (containing div/body) and the children,
-        // which are swapped out by the route handler.
-        var props = assign({}, this.props);
-        props = omit(props, PROP_KEYS);
-        return React.createElement(this.props.component, props, handler);
-      }
-    }
-  });
-}
-
-module.exports = {
-  createRouter: createRouter,
-  Locations: createRouter('Locations', 'div'),
-  Pages: createRouter('Pages', 'body')
-};
-
-
-/***/ }),
-/* 203 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var Environment   = __webpack_require__(34);
-var emptyFunction = function() {};
-
-/**
- * Dummy routing environment which provides no path.
- *
- * Should be used on server or in WebWorker.
- */
-function DummyEnvironment() {
-  Environment.call(this);
-}
-
-DummyEnvironment.prototype = Object.create(Environment.prototype);
-DummyEnvironment.prototype.constructor = DummyEnvironment;
-
-DummyEnvironment.prototype.getPath = function() { return null; };
-
-DummyEnvironment.prototype.setPath = function(path, navigation, cb) {
-  // Support old (path, cb) arity
-  if (typeof navigation === 'function' && cb === undefined) {
-    cb = navigation;
-    navigation = {};
-  }
-  this.path = path;
-  cb();
-};
-
-DummyEnvironment.prototype.start = emptyFunction;
-
-DummyEnvironment.prototype.stop = emptyFunction;
-
-module.exports = DummyEnvironment;
-
-
-/***/ }),
-/* 204 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var Environment = __webpack_require__(34);
-
-/**
- * Routing environment which routes by `location.pathname`.
- */
-function PathnameEnvironment() {
-  this.onPopState = this.onPopState.bind(this);
-  this.useHistoryApi = !!(window.history &&
-                          window.history.pushState &&
-                          window.history.replaceState);
-  Environment.call(this);
-}
-
-PathnameEnvironment.prototype = Object.create(Environment.prototype);
-PathnameEnvironment.prototype.constructor = PathnameEnvironment;
-
-PathnameEnvironment.prototype.getPath = function() {
-  return window.location.pathname + window.location.search;
-};
-
-PathnameEnvironment.prototype.pushState = function(path, navigation) {
-  if (this.useHistoryApi) {
-    window.history.pushState({}, '', path);
-  } else {
-    window.location.pathname = path;
-  }
-};
-
-PathnameEnvironment.prototype.replaceState = function(path, navigation) {
-  if (this.useHistoryApi) {
-    window.history.replaceState({}, '', path);
-  } else {
-    window.location.pathname = path;
-  }
-};
-
-PathnameEnvironment.prototype.start = function() {
-  if (this.useHistoryApi && window.addEventListener) {
-    window.addEventListener('popstate', this.onPopState);
-  }
-};
-
-PathnameEnvironment.prototype.stop = function() {
-  if (this.useHistoryApi && window.removeEventListener) {
-    window.removeEventListener('popstate', this.onPopState);
-  }
-};
-
-PathnameEnvironment.prototype.onPopState = function(e) {
-  var path = window.location.pathname;
-
-  if (this.path !== path) {
-    this.setPath(path, {isPopState: true});
-  }
-};
-
-module.exports = PathnameEnvironment;
-
-
-/***/ }),
-/* 205 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var URLPattern = __webpack_require__(94);
-var invariant = __webpack_require__(87);
-var warning = __webpack_require__(206);
-var React = __webpack_require__(5);
-var assign = Object.assign || __webpack_require__(4);
-var omit = __webpack_require__(27);
-var qs = __webpack_require__(207);
-
-var patternCache = {};
-
-/**
- * Match routes against a path
- *
- * @param {Array.<Route>}  routes                  Available Routes.
- * @param {String}         path                    Path to match.
- * @param {[Object|Array]} routerURLPatternOptions URLPattern options from parent router (and its parent and so on).
- */
-function matchRoutes(routes, path, routerURLPatternOptions) {
-  var match, page, notFound, queryObj, urlPatternOptions;
-
-  if (!Array.isArray(routes)) {
-    routes = [routes];
-  }
-
-  path = path.split('?');
-  var pathToMatch = path[0];
-  var queryString = path[1];
-  if (queryString) {
-    queryObj = qs.parse(queryString);
-  }
-
-  for (var i = 0, len = routes.length; i < len; i++) {
-    var current = routes[i];
-    // Simply skip null or undefined to allow ternaries in route definitions
-    if (!current) continue;
-
-    invariant(
-      current.props.handler !== undefined && current.props.path !== undefined,
-      "Router should contain either Route or NotFound components as routes");
-
-    if (current.props.path) {
-      // Allow passing compiler options to url-pattern, see
-      // https://github.com/snd/url-pattern#customize-the-pattern-syntax
-      // Note that this blows up if you provide an empty object on a regex path
-      urlPatternOptions = null;
-      if (Array.isArray(current.props.urlPatternOptions) || current.props.path instanceof RegExp) {
-        // If an array is passed, it takes precedence - assumed these are regexp keys
-        urlPatternOptions = current.props.urlPatternOptions;
-      } else if (routerURLPatternOptions || current.props.urlPatternOptions) {
-        urlPatternOptions = assign({}, routerURLPatternOptions, current.props.urlPatternOptions);
-      }
-
-      // matchKeys is deprecated
-      // FIXME remove this block in next minor version
-      if(current.props.matchKeys) {
-        urlPatternOptions = current.props.matchKeys;
-        warning(false,
-          '`matchKeys` is deprecated; please use the prop `urlPatternOptions` instead. See the CHANGELOG for details.');
-      }
-
-      var cacheKey = current.props.path + (urlPatternOptions ? JSON.stringify(urlPatternOptions) : '');
-
-      var pattern = patternCache[cacheKey];
-      if (!pattern) {
-        pattern = patternCache[cacheKey] = new URLPattern(current.props.path, urlPatternOptions);
-      }
-
-      if (!page) {
-        match = pattern.match(pathToMatch);
-        if (match) {
-          page = current;
-        }
-
-        // Backcompat fix in 0.27: regexes in url-pattern no longer return {_: matches}
-        if (match && current.props.path instanceof RegExp && !match._ && Array.isArray(match)) {
-          match = {_: match};
-        }
-
-        // Backcompat fix; url-pattern removed the array wrapper on wildcards
-        if (match && match._ && !Array.isArray(match._)) {
-          match._ = [match._];
-        }
-
-      }
-    }
-    if (!notFound && current.props.path === null) {
-      notFound = current;
-    }
-  }
-
-  return new Match(
-    pathToMatch,
-    page ? page : notFound ? notFound : null,
-    match,
-    queryObj,
-    (urlPatternOptions || {}).namedSegmentValueDecoders
-  );
-}
-
-/**
- * Match object
- *
- * @private
- */
-function Match(path, route, match, query, valueDecoders) {
-  this.path = path;
-  this.route = route;
-  this.match = match;
-  this.query = query;
-
-  if (valueDecoders) {    
-    Object.keys(match || {}).forEach(function(key) {
-      if (typeof valueDecoders === 'function') {
-        match[key] = valueDecoders(key, match[key]);
-        return;
-      }
-      var fn = valueDecoders.hasOwnProperty(key) && valueDecoders[key];
-      if (typeof fn === 'function') {
-        match[key] = fn(match[key]);
-      }
-    });
-  }
-
-  this.unmatchedPath = this.match && this.match._ ?
-    this.match._[0] :
-    null;
-
-  this.matchedPath = this.unmatchedPath ?
-    this.path.substring(0, this.path.length - this.unmatchedPath.length) :
-    this.path;
-}
-
-var EMPTY_OBJECT = {}; // Maintains reference equality, useful for SCU
-Object.freeze && Object.freeze(EMPTY_OBJECT);
-Match.prototype.getProps = function() {
-  if (!this.route) {
-    throw new Error("React-router-component: No route matched! Did you define a NotFound route?");
-  }
-  var props = assign({}, this.route.props, this.match);
-  // Querystring is assigned as _query.
-  props._query = this.query || EMPTY_OBJECT;
-
-  // Delete props that shouldn't be passed to the handler.
-  props = omit(props, ['pattern', 'path', 'handler']);
-
-  return props;
-}
-
-Match.prototype.getHandler = function() {
-  if (!this.route) return undefined;
-
-  return this.route.props.handler;
-};
-
-module.exports = matchRoutes;
-
-
-/***/ }),
-/* 206 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(process) {/**
- * Copyright 2014 Facebook, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * @providesModule warning
- */
-
-
-
-/**
- * Similar to invariant but only logs a warning if the condition is not met.
- * This can be used to log issues in development environments in critical
- * paths. Removing the logging code for production environments will keep the
- * same logic and follow the same code paths.
- */
-
-var warning = function(){};
-
-if ("production" !== process.env.NODE_ENV) {
-  warning = function(condition, format ) {var args=Array.prototype.slice.call(arguments,2);
-    if (format === undefined) {
-      throw new Error(
-        '`warning(condition, format, ...args)` requires a warning ' +
-        'message argument'
-      );
-    }
-
-    if (!condition) {
-      var argIndex = 0;
-      /*eslint no-console:0*/
-      console.warn('Warning: ' + format.replace(/%s/g, function()  {return args[argIndex++];}));
-    }
-  };
-}
-
-module.exports = warning;
-
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
-
-/***/ }),
-/* 207 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var stringify = __webpack_require__(209);
-var parse = __webpack_require__(208);
-var formats = __webpack_require__(88);
-
-module.exports = {
-    formats: formats,
-    parse: parse,
-    stringify: stringify
-};
-
-
-/***/ }),
-/* 208 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var utils = __webpack_require__(89);
-
-var has = Object.prototype.hasOwnProperty;
-
-var defaults = {
-    allowDots: false,
-    allowPrototypes: false,
-    arrayLimit: 20,
-    decoder: utils.decode,
-    delimiter: '&',
-    depth: 5,
-    parameterLimit: 1000,
-    plainObjects: false,
-    strictNullHandling: false
-};
-
-var parseValues = function parseQueryStringValues(str, options) {
-    var obj = {};
-    var parts = str.split(options.delimiter, options.parameterLimit === Infinity ? undefined : options.parameterLimit);
-
-    for (var i = 0; i < parts.length; ++i) {
-        var part = parts[i];
-        var pos = part.indexOf(']=') === -1 ? part.indexOf('=') : part.indexOf(']=') + 1;
-
-        var key, val;
-        if (pos === -1) {
-            key = options.decoder(part);
-            val = options.strictNullHandling ? null : '';
-        } else {
-            key = options.decoder(part.slice(0, pos));
-            val = options.decoder(part.slice(pos + 1));
-        }
-        if (has.call(obj, key)) {
-            obj[key] = [].concat(obj[key]).concat(val);
-        } else {
-            obj[key] = val;
-        }
-    }
-
-    return obj;
-};
-
-var parseObject = function parseObjectRecursive(chain, val, options) {
-    if (!chain.length) {
-        return val;
-    }
-
-    var root = chain.shift();
-
-    var obj;
-    if (root === '[]') {
-        obj = [];
-        obj = obj.concat(parseObject(chain, val, options));
-    } else {
-        obj = options.plainObjects ? Object.create(null) : {};
-        var cleanRoot = root.charAt(0) === '[' && root.charAt(root.length - 1) === ']' ? root.slice(1, -1) : root;
-        var index = parseInt(cleanRoot, 10);
-        if (
-            !isNaN(index) &&
-            root !== cleanRoot &&
-            String(index) === cleanRoot &&
-            index >= 0 &&
-            (options.parseArrays && index <= options.arrayLimit)
-        ) {
-            obj = [];
-            obj[index] = parseObject(chain, val, options);
-        } else {
-            obj[cleanRoot] = parseObject(chain, val, options);
-        }
-    }
-
-    return obj;
-};
-
-var parseKeys = function parseQueryStringKeys(givenKey, val, options) {
-    if (!givenKey) {
-        return;
-    }
-
-    // Transform dot notation to bracket notation
-    var key = options.allowDots ? givenKey.replace(/\.([^.[]+)/g, '[$1]') : givenKey;
-
-    // The regex chunks
-
-    var brackets = /(\[[^[\]]*])/;
-    var child = /(\[[^[\]]*])/g;
-
-    // Get the parent
-
-    var segment = brackets.exec(key);
-    var parent = segment ? key.slice(0, segment.index) : key;
-
-    // Stash the parent if it exists
-
-    var keys = [];
-    if (parent) {
-        // If we aren't using plain objects, optionally prefix keys
-        // that would overwrite object prototype properties
-        if (!options.plainObjects && has.call(Object.prototype, parent)) {
-            if (!options.allowPrototypes) {
-                return;
-            }
-        }
-
-        keys.push(parent);
-    }
-
-    // Loop through children appending to the array until we hit depth
-
-    var i = 0;
-    while ((segment = child.exec(key)) !== null && i < options.depth) {
-        i += 1;
-        if (!options.plainObjects && has.call(Object.prototype, segment[1].slice(1, -1))) {
-            if (!options.allowPrototypes) {
-                return;
-            }
-        }
-        keys.push(segment[1]);
-    }
-
-    // If there's a remainder, just add whatever is left
-
-    if (segment) {
-        keys.push('[' + key.slice(segment.index) + ']');
-    }
-
-    return parseObject(keys, val, options);
-};
-
-module.exports = function (str, opts) {
-    var options = opts || {};
-
-    if (options.decoder !== null && options.decoder !== undefined && typeof options.decoder !== 'function') {
-        throw new TypeError('Decoder has to be a function.');
-    }
-
-    options.delimiter = typeof options.delimiter === 'string' || utils.isRegExp(options.delimiter) ? options.delimiter : defaults.delimiter;
-    options.depth = typeof options.depth === 'number' ? options.depth : defaults.depth;
-    options.arrayLimit = typeof options.arrayLimit === 'number' ? options.arrayLimit : defaults.arrayLimit;
-    options.parseArrays = options.parseArrays !== false;
-    options.decoder = typeof options.decoder === 'function' ? options.decoder : defaults.decoder;
-    options.allowDots = typeof options.allowDots === 'boolean' ? options.allowDots : defaults.allowDots;
-    options.plainObjects = typeof options.plainObjects === 'boolean' ? options.plainObjects : defaults.plainObjects;
-    options.allowPrototypes = typeof options.allowPrototypes === 'boolean' ? options.allowPrototypes : defaults.allowPrototypes;
-    options.parameterLimit = typeof options.parameterLimit === 'number' ? options.parameterLimit : defaults.parameterLimit;
-    options.strictNullHandling = typeof options.strictNullHandling === 'boolean' ? options.strictNullHandling : defaults.strictNullHandling;
-
-    if (str === '' || str === null || typeof str === 'undefined') {
-        return options.plainObjects ? Object.create(null) : {};
-    }
-
-    var tempObj = typeof str === 'string' ? parseValues(str, options) : str;
-    var obj = options.plainObjects ? Object.create(null) : {};
-
-    // Iterate over the keys and setup the new object
-
-    var keys = Object.keys(tempObj);
-    for (var i = 0; i < keys.length; ++i) {
-        var key = keys[i];
-        var newObj = parseKeys(key, tempObj[key], options);
-        obj = utils.merge(obj, newObj, options);
-    }
-
-    return utils.compact(obj);
-};
-
-
-/***/ }),
-/* 209 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var utils = __webpack_require__(89);
-var formats = __webpack_require__(88);
-
-var arrayPrefixGenerators = {
-    brackets: function brackets(prefix) { // eslint-disable-line func-name-matching
-        return prefix + '[]';
-    },
-    indices: function indices(prefix, key) { // eslint-disable-line func-name-matching
-        return prefix + '[' + key + ']';
-    },
-    repeat: function repeat(prefix) { // eslint-disable-line func-name-matching
-        return prefix;
-    }
-};
-
-var toISO = Date.prototype.toISOString;
-
-var defaults = {
-    delimiter: '&',
-    encode: true,
-    encoder: utils.encode,
-    encodeValuesOnly: false,
-    serializeDate: function serializeDate(date) { // eslint-disable-line func-name-matching
-        return toISO.call(date);
-    },
-    skipNulls: false,
-    strictNullHandling: false
-};
-
-var stringify = function stringify( // eslint-disable-line func-name-matching
-    object,
-    prefix,
-    generateArrayPrefix,
-    strictNullHandling,
-    skipNulls,
-    encoder,
-    filter,
-    sort,
-    allowDots,
-    serializeDate,
-    formatter,
-    encodeValuesOnly
-) {
-    var obj = object;
-    if (typeof filter === 'function') {
-        obj = filter(prefix, obj);
-    } else if (obj instanceof Date) {
-        obj = serializeDate(obj);
-    } else if (obj === null) {
-        if (strictNullHandling) {
-            return encoder && !encodeValuesOnly ? encoder(prefix) : prefix;
-        }
-
-        obj = '';
-    }
-
-    if (typeof obj === 'string' || typeof obj === 'number' || typeof obj === 'boolean' || utils.isBuffer(obj)) {
-        if (encoder) {
-            var keyValue = encodeValuesOnly ? prefix : encoder(prefix);
-            return [formatter(keyValue) + '=' + formatter(encoder(obj))];
-        }
-        return [formatter(prefix) + '=' + formatter(String(obj))];
-    }
-
-    var values = [];
-
-    if (typeof obj === 'undefined') {
-        return values;
-    }
-
-    var objKeys;
-    if (Array.isArray(filter)) {
-        objKeys = filter;
-    } else {
-        var keys = Object.keys(obj);
-        objKeys = sort ? keys.sort(sort) : keys;
-    }
-
-    for (var i = 0; i < objKeys.length; ++i) {
-        var key = objKeys[i];
-
-        if (skipNulls && obj[key] === null) {
-            continue;
-        }
-
-        if (Array.isArray(obj)) {
-            values = values.concat(stringify(
-                obj[key],
-                generateArrayPrefix(prefix, key),
-                generateArrayPrefix,
-                strictNullHandling,
-                skipNulls,
-                encoder,
-                filter,
-                sort,
-                allowDots,
-                serializeDate,
-                formatter,
-                encodeValuesOnly
-            ));
-        } else {
-            values = values.concat(stringify(
-                obj[key],
-                prefix + (allowDots ? '.' + key : '[' + key + ']'),
-                generateArrayPrefix,
-                strictNullHandling,
-                skipNulls,
-                encoder,
-                filter,
-                sort,
-                allowDots,
-                serializeDate,
-                formatter,
-                encodeValuesOnly
-            ));
-        }
-    }
-
-    return values;
-};
-
-module.exports = function (object, opts) {
-    var obj = object;
-    var options = opts || {};
-
-    if (options.encoder !== null && options.encoder !== undefined && typeof options.encoder !== 'function') {
-        throw new TypeError('Encoder has to be a function.');
-    }
-
-    var delimiter = typeof options.delimiter === 'undefined' ? defaults.delimiter : options.delimiter;
-    var strictNullHandling = typeof options.strictNullHandling === 'boolean' ? options.strictNullHandling : defaults.strictNullHandling;
-    var skipNulls = typeof options.skipNulls === 'boolean' ? options.skipNulls : defaults.skipNulls;
-    var encode = typeof options.encode === 'boolean' ? options.encode : defaults.encode;
-    var encoder = typeof options.encoder === 'function' ? options.encoder : defaults.encoder;
-    var sort = typeof options.sort === 'function' ? options.sort : null;
-    var allowDots = typeof options.allowDots === 'undefined' ? false : options.allowDots;
-    var serializeDate = typeof options.serializeDate === 'function' ? options.serializeDate : defaults.serializeDate;
-    var encodeValuesOnly = typeof options.encodeValuesOnly === 'boolean' ? options.encodeValuesOnly : defaults.encodeValuesOnly;
-    if (typeof options.format === 'undefined') {
-        options.format = formats.default;
-    } else if (!Object.prototype.hasOwnProperty.call(formats.formatters, options.format)) {
-        throw new TypeError('Unknown format option provided.');
-    }
-    var formatter = formats.formatters[options.format];
-    var objKeys;
-    var filter;
-
-    if (typeof options.filter === 'function') {
-        filter = options.filter;
-        obj = filter('', obj);
-    } else if (Array.isArray(options.filter)) {
-        filter = options.filter;
-        objKeys = filter;
-    }
-
-    var keys = [];
-
-    if (typeof obj !== 'object' || obj === null) {
-        return '';
-    }
-
-    var arrayFormat;
-    if (options.arrayFormat in arrayPrefixGenerators) {
-        arrayFormat = options.arrayFormat;
-    } else if ('indices' in options) {
-        arrayFormat = options.indices ? 'indices' : 'repeat';
-    } else {
-        arrayFormat = 'indices';
-    }
-
-    var generateArrayPrefix = arrayPrefixGenerators[arrayFormat];
-
-    if (!objKeys) {
-        objKeys = Object.keys(obj);
-    }
-
-    if (sort) {
-        objKeys.sort(sort);
-    }
-
-    for (var i = 0; i < objKeys.length; ++i) {
-        var key = objKeys[i];
-
-        if (skipNulls && obj[key] === null) {
-            continue;
-        }
-
-        keys = keys.concat(stringify(
-            obj[key],
-            key,
-            generateArrayPrefix,
-            strictNullHandling,
-            skipNulls,
-            encode ? encoder : null,
-            filter,
-            sort,
-            allowDots,
-            serializeDate,
-            formatter,
-            encodeValuesOnly
-        ));
-    }
-
-    return keys.join(delimiter);
-};
-
-
-/***/ }),
+/* 198 */,
+/* 199 */,
+/* 200 */,
+/* 201 */,
+/* 202 */,
+/* 203 */,
+/* 204 */,
+/* 205 */,
+/* 206 */,
+/* 207 */,
+/* 208 */,
+/* 209 */,
 /* 210 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -25520,86 +22996,8 @@ module.exports = traverseAllChildren;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 223 */
-/***/ (function(module, exports) {
-
-(function() {
-  var URL, URL_PATTERN, defaults, urllite,
-    __hasProp = {}.hasOwnProperty;
-
-  URL_PATTERN = /^(?:(?:([^:\/?\#]+:)\/+|(\/\/))(?:([a-z0-9-\._~%]+)(?::([a-z0-9-\._~%]+))?@)?(([a-z0-9-\._~%!$&'()*+,;=]+)(?::([0-9]+))?)?)?([^?\#]*?)(\?[^\#]*)?(\#.*)?$/;
-
-  urllite = function(raw, opts) {
-    return urllite.URL.parse(raw, opts);
-  };
-
-  urllite.URL = URL = (function() {
-    function URL(props) {
-      var k, v, _ref;
-      for (k in defaults) {
-        if (!__hasProp.call(defaults, k)) continue;
-        v = defaults[k];
-        this[k] = (_ref = props[k]) != null ? _ref : v;
-      }
-      this.host || (this.host = this.hostname && this.port ? "" + this.hostname + ":" + this.port : this.hostname ? this.hostname : '');
-      this.origin || (this.origin = this.protocol ? "" + this.protocol + "//" + this.host : '');
-      this.isAbsolutePathRelative = !this.host && this.pathname.charAt(0) === '/';
-      this.isPathRelative = !this.host && this.pathname.charAt(0) !== '/';
-      this.isRelative = this.isSchemeRelative || this.isAbsolutePathRelative || this.isPathRelative;
-      this.isAbsolute = !this.isRelative;
-    }
-
-    URL.parse = function(raw) {
-      var m, pathname, protocol;
-      m = raw.toString().match(URL_PATTERN);
-      pathname = m[8] || '';
-      protocol = m[1];
-      return new urllite.URL({
-        protocol: protocol,
-        username: m[3],
-        password: m[4],
-        hostname: m[6],
-        port: m[7],
-        pathname: protocol && pathname.charAt(0) !== '/' ? "/" + pathname : pathname,
-        search: m[9],
-        hash: m[10],
-        isSchemeRelative: m[2] != null
-      });
-    };
-
-    return URL;
-
-  })();
-
-  defaults = {
-    protocol: '',
-    username: '',
-    password: '',
-    host: '',
-    hostname: '',
-    port: '',
-    pathname: '',
-    search: '',
-    hash: '',
-    origin: '',
-    isSchemeRelative: false
-  };
-
-  module.exports = urllite;
-
-}).call(this);
-
-
-/***/ }),
-/* 224 */
-/***/ (function(module, exports) {
-
-/* WEBPACK VAR INJECTION */(function(__webpack_amd_options__) {/* globals __webpack_amd_options__ */
-module.exports = __webpack_amd_options__;
-
-/* WEBPACK VAR INJECTION */}.call(exports, {}))
-
-/***/ }),
+/* 223 */,
+/* 224 */,
 /* 225 */,
 /* 226 */
 /***/ (function(module, exports, __webpack_require__) {
@@ -25617,6 +23015,22 @@ var _react = __webpack_require__(5);
 
 var _react2 = _interopRequireDefault(_react);
 
+var _Event = __webpack_require__(227);
+
+var _Event2 = _interopRequireDefault(_Event);
+
+var _Storage = __webpack_require__(56);
+
+var _Storage2 = _interopRequireDefault(_Storage);
+
+var _Card = __webpack_require__(36);
+
+var _Card2 = _interopRequireDefault(_Card);
+
+var _ArtistSelector = __webpack_require__(228);
+
+var _ArtistSelector2 = _interopRequireDefault(_ArtistSelector);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -25631,17 +23045,64 @@ var Note = function (_React$Component) {
     function Note() {
         _classCallCheck(this, Note);
 
-        return _possibleConstructorReturn(this, (Note.__proto__ || Object.getPrototypeOf(Note)).call(this));
+        var _this = _possibleConstructorReturn(this, (Note.__proto__ || Object.getPrototypeOf(Note)).call(this));
+
+        _this.artistChange = function () {
+            return _this._artistChange();
+        };
+        _this.state = { vote: _Storage2.default.getVote() };
+        return _this;
     }
 
     _createClass(Note, [{
         key: 'render',
         value: function render() {
+            var _this2 = this;
+
             return _react2.default.createElement(
-                'p',
+                'div',
                 null,
-                'Ermagerd, vote!'
+                _react2.default.createElement(
+                    'div',
+                    { className: 'btn-vote-wrapper' },
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'btn btn-default btn-vote-2', onClick: function onClick() {
+                                _Event2.default.trigger("voteView");
+                            } },
+                        'Tillbaka'
+                    ),
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'btn btn-primary btn-vote-2', onClick: function onClick() {
+                                _Event2.default.trigger("voteView");
+                            } },
+                        'R\xF6sta'
+                    )
+                ),
+                this.getPoints().map(function (point) {
+                    return _react2.default.createElement(
+                        _Card2.default,
+                        { key: point.value },
+                        _react2.default.createElement(_ArtistSelector2.default, { point: point, onArtistChange: _this2.artistChange })
+                    );
+                })
             );
+        }
+    }, {
+        key: '_artistChange',
+        value: function _artistChange() {}
+    }, {
+        key: 'getPoints',
+        value: function getPoints() {
+            var _this3 = this;
+
+            return !this.state ? [] : Object.keys(this.state.vote).map(function (prop) {
+                return {
+                    value: prop,
+                    artistId: _this3.state.vote[prop]
+                };
+            }).reverse();
         }
     }]);
 
@@ -25649,6 +23110,130 @@ var Note = function (_React$Component) {
 }(_react2.default.Component);
 
 exports.default = Note;
+
+/***/ }),
+/* 227 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _Storage = __webpack_require__(56);
+
+var _Storage2 = _interopRequireDefault(_Storage);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Event = function () {
+    function Event() {
+        _classCallCheck(this, Event);
+
+        this.listeners = new Map();
+    }
+
+    _createClass(Event, [{
+        key: 'trigger',
+        value: function trigger(name) {
+            var listener = this.listeners.get(name);
+            if (!listener) return;
+            listener[0]();
+        }
+    }, {
+        key: 'on',
+        value: function on(name, callback) {
+            var callbacks = this.listeners.get(name);
+            if (!callbacks) {
+                callbacks = [];
+            }
+            callbacks.push(callback);
+            this.listeners.set(name, callbacks);
+        }
+    }]);
+
+    return Event;
+}();
+
+var event = new Event();
+exports.default = event;
+
+/***/ }),
+/* 228 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(5);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _Storage = __webpack_require__(56);
+
+var _Storage2 = _interopRequireDefault(_Storage);
+
+var _artists = __webpack_require__(96);
+
+var _artists2 = _interopRequireDefault(_artists);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var ArtistSelector = function (_React$Component) {
+    _inherits(ArtistSelector, _React$Component);
+
+    function ArtistSelector() {
+        _classCallCheck(this, ArtistSelector);
+
+        return _possibleConstructorReturn(this, (ArtistSelector.__proto__ || Object.getPrototypeOf(ArtistSelector)).call(this));
+    }
+
+    _createClass(ArtistSelector, [{
+        key: 'componentDidMount',
+        value: function componentDidMount() {}
+    }, {
+        key: 'render',
+        value: function render() {
+            return _react2.default.createElement(
+                'div',
+                { className: 'artistSelector' },
+                _react2.default.createElement(
+                    'div',
+                    { className: 'point' },
+                    this.props.point.value,
+                    ' po\xE4ng'
+                ),
+                _react2.default.createElement(
+                    'div',
+                    { className: 'artistArea' },
+                    'Klicka f\xF6r att v\xE4lja artist'
+                )
+            );
+        }
+    }]);
+
+    return ArtistSelector;
+}(_react2.default.Component);
+
+exports.default = ArtistSelector;
 
 /***/ })
 /******/ ]);

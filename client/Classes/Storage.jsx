@@ -1,5 +1,6 @@
 const _userName = "userName";
 const _notes = "notes";
+const _vote = "vote";
 
 class Storage {
     constructor() {
@@ -49,6 +50,14 @@ class Storage {
         else {
             return this.storageGet(_userName);
         }
+    }
+    getVote() {
+        let vote = this.storageGet(_vote);
+        if (!vote) {
+            vote = { "1": null, "2": null, "3": null, "4": null, "5": null, "6": null, "7": null, "8": null, "10": null, "12": null };
+            this.storageSet(_vote, vote);
+        }
+        return vote;
     }
 }
 

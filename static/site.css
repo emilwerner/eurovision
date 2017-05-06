@@ -164,30 +164,51 @@ h1{
    max-height: 500px;
 }
 
-
-@media all and (orientation:portrait) {
-    .toolBar  {   
-        height:50px;
-        width:100%;
-        bottom: 0;
-    } 
-}
-@media all and (orientation:landscape) {
-    .toolBar  {    
-        height: 100%;
-        width:50px;
-        top:0;        
-    }
-    body{
-        margin-right: 70px;
-    }
-}
-
 .btn-vote{
     display:block;
-    margin:10px;
     margin-bottom: 0;
     text-align: center;
     font-size:24px;
+}
+.btn-vote-2 {
+    display:inline-block;
+    width:50%;
+    margin-bottom: 0;
+    text-align: center;
+    font-size:24px;
+}
+
+.btn-vote-2:nth-of-type(1){
+    border-radius:3px 0 0 3px;
+}
+
+.btn-vote-2:nth-of-type(2){
+    border-radius:0 3px 3px 0;
+}
+
+.btn-vote-wrapper{
+    margin:10px;
     box-shadow: 0 5px 10px rgba(0,0,0,0.19), 0 3px 3px rgba(0,0,0,0.23);
+}
+.artistSelector{
+    min-height:40px;
+}
+
+.artistSelector .artistArea{
+        padding: 10px;
+        display:inline-block;
+        width:75%;
+        height:100%;
+        font-size:18px;
+        text-align:center;
+}
+.artistSelector .point{
+        padding: 10px;
+        display:inline-block;
+        width:25%;
+        background: rgba(200,200,0, 0.6);
+        height:100%;
+        border-radius:3px 0 0 3px;
+        font-size:18px;
+        color:white;
 }
